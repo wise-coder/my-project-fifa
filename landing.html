@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIFA Stats - Track Your Game</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-bg: #121212;
+            --secondary-bg: #1E1E1E;
+            --tertiary-bg: #2D2D2D;
+            --primary-text: #FFFFFF;
+            --secondary-text: #B0B0B0;
+            --accent-color: #00FF88;
+            --accent-hover: #00CC6A;
+            --danger-color: #FF4757;
+            --border-color: #3D3D3D;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--primary-text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Background Pattern */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
+                linear-gradient(135deg, #121212 0%, #1a1a2e 100%);
+            z-index: -1;
+        }
+
+        /* Grid overlay */
+        .bg-pattern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        .landing-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Logo Styles */
+        .logo-container {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .logo-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--accent-color), #00AA55);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 40px rgba(0, 255, 136, 0.3);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 10px 40px rgba(0, 255, 136, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 10px 60px rgba(0, 255, 136, 0.5);
+            }
+        }
+
+        .logo-icon i {
+            font-size: 50px;
+            color: var(--primary-bg);
+        }
+
+        .app-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary-text), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .app-subtitle {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--secondary-text);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Description */
+        .description-box {
+            max-width: 600px;
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(30, 30, 30, 0.6);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+        }
+
+        .description-box p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--secondary-text);
+        }
+
+        .description-box .highlight {
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+
+        /* Buttons */
+        .btn-group-landing {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn-fifa {
+            padding: 16px 48px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-fifa-primary {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+            border: none;
+        }
+
+        .btn-fifa-primary:hover {
+            background: var(--accent-hover);
+            color: var(--primary-bg);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.4);
+        }
+
+        .btn-fifa-outline {
+            background: transparent;
+            color: var(--accent-color);
+            border: 2px solid var(--accent-color);
+        }
+
+        .btn-fifa-outline:hover {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.4);
+        }
+
+        /* Features Preview */
+        .features-row {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 60px;
+            flex-wrap: wrap;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .feature-item i {
+            font-size: 2rem;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+        }
+
+        .feature-item span {
+            display: block;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            color: var(--secondary-text);
+        }
+
+        /* Responsive */
+        @media (max-width: 576px) {
+            .app-title {
+                font-size: 2.5rem;
+            }
+
+            .app-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .btn-fifa {
+                padding: 14px 32px;
+                font-size: 1rem;
+            }
+
+            .btn-group-landing {
+                flex-direction: column;
+                width: 100%;
+                max-width: 280px;
+            }
+
+            .description-box {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Background Pattern -->
+    <div class="bg-pattern"></div>
+
+    <!-- Main Container -->
+    <div class="landing-container">
+        <!-- Logo Section -->
+        <div class="logo-container">
+            <div class="logo-icon">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <h1 class="app-title">FIFA STATS</h1>
+            <p class="app-subtitle">Track Your Glory</p>
+        </div>
+
+        <!-- Description -->
+        <div class="description-box">
+            <p>
+                Elevate your <span class="highlight">FIFA experience</span> with our advanced stats platform.
+                Upload your match screenshots, compete on the <span class="highlight">leaderboard</span>,
+                track your <span class="highlight">progress</span>, and stay updated with the latest notifications.
+                Your journey to becoming a pro starts here!
+            </p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="btn-group-landing">
+            <a href="register.html" class="btn btn-fifa btn-fifa-primary">
+                <i class="fas fa-user-plus me-2"></i>Register
+            </a>
+            <a href="login.html" class="btn btn-fifa btn-fifa-outline">
+                <i class="fas fa-sign-in-alt me-2"></i>Login
+            </a>
+        </div>
+
+        <!-- Features Preview -->
+        <div class="features-row">
+            <div class="feature-item">
+                <i class="fas fa-camera"></i>
+                <span>Upload Screenshots</span>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-list-ol"></i>
+                <span>Leaderboard</span>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-chart-line"></i>
+                <span>Track Progress</span>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-bell"></i>
+                <span>Notifications</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
