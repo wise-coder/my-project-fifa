@@ -42,7 +42,8 @@ ALLOWED_ORIGINS = [
     "http://localhost:5501",   # Localhost variant
     "http://127.0.0.1:5000",  # Same origin fallback
     "http://localhost:5000",   # Same origin fallback
-    "https://fifa-dls-gamers.onrender.com",  # Frontend static site
+    "https://fifa-dls-gamers.onrender.com",  # Previous frontend static site
+    "https://fifa-dls-progamers.onrender.com",  # Current frontend static site
     "https://fifa-fighters.onrender.com",    # Backend / same-site calls
 ]
 
