@@ -6,7 +6,7 @@ Analyzes FIFA match screenshots using Google Gemini AI to extract match statisti
 
 import os
 import logging
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 import json
 
 # Import API key manager
@@ -38,6 +38,7 @@ class AIAnalyzer:
     def __init__(self):
         """Initialize the AI analyzer."""
         self.model = None
+        self.allow_fallback_scoring = os.getenv('ALLOW_FALLBACK_SCORING', 'false').lower() == 'true'
         if GENAI_AVAILABLE:
             self._configure_model()
     
@@ -77,8 +78,10 @@ class AIAnalyzer:
             myfile = genai.upload_file(image_path)
             
             # Create the prompt
-            prompt = """You are a FIFA match statistics analyzer. 
-Analyze this FIFA match screenshot and extract the following statistics:
+            prompt = """You are a strict FIFA/football match statistics validator.
+Only set is_valid_screenshot=true if this image clearly shows a real football match stats/result screen.
+If the image is a person photo, selfie, unrelated content, text-only poster, document, or unclear content, set is_valid_screenshot=false.
+Analyze this image and extract:
 
 1. Goals (goals scored by the player)
 2. Assists (goals assisted)
@@ -147,20 +150,20 @@ If the image is not a valid FIFA match statistics screenshot, set is_valid_scree
             if json_match:
                 json_str = json_match.group(0)
                 data = json.loads(json_str)
-                
-                # Validate and return the data
-                return {
+
+                parsed = {
                     'success': True,
-                    'is_valid_screenshot': data.get('is_valid_screenshot', True),
-                    'goals': data.get('goals', 0),
-                    'assists': data.get('assists', 0),
-                    'possession': data.get('possession', 50),
-                    'shots': data.get('shots', 0),
-                    'shots_on_target': data.get('shots_on_target', 0),
-                    'pass_accuracy': data.get('pass_accuracy', 0),
-                    'tackles': data.get('tackles', 0),
+                    'is_valid_screenshot': bool(data.get('is_valid_screenshot', False)),
+                    'goals': int(data.get('goals', 0) or 0),
+                    'assists': int(data.get('assists', 0) or 0),
+                    'possession': int(data.get('possession', 0) or 0),
+                    'shots': int(data.get('shots', 0) or 0),
+                    'shots_on_target': int(data.get('shots_on_target', 0) or 0),
+                    'pass_accuracy': int(data.get('pass_accuracy', 0) or 0),
+                    'tackles': int(data.get('tackles', 0) or 0),
                     'analysis_notes': data.get('analysis_notes', '')
                 }
+                return self._validate_stats(parsed)
             
             # If no JSON found, return fallback
             return self._fallback_analysis()
@@ -168,6 +171,35 @@ If the image is not a valid FIFA match statistics screenshot, set is_valid_scree
         except Exception as e:
             logger.error(f"Error parsing AI response: {e}")
             return self._fallback_analysis()
+
+    def _validate_stats(self, result: Dict[str, Any]) -> Dict[str, Any]:
+        """Validate extracted stats and reject suspicious/non-match data."""
+        if not result.get('is_valid_screenshot', False):
+            return result
+
+        goals = int(result.get('goals', 0))
+        assists = int(result.get('assists', 0))
+        possession = int(result.get('possession', 0))
+        shots = int(result.get('shots', 0))
+        shots_on_target = int(result.get('shots_on_target', 0))
+        pass_accuracy = int(result.get('pass_accuracy', 0))
+        tackles = int(result.get('tackles', 0))
+
+        ranges_ok = (
+            0 <= goals <= 20 and
+            0 <= assists <= 20 and
+            0 <= possession <= 100 and
+            0 <= shots <= 60 and
+            0 <= shots_on_target <= 40 and
+            shots_on_target <= shots and
+            0 <= pass_accuracy <= 100 and
+            0 <= tackles <= 50
+        )
+
+        if not ranges_ok:
+            result['is_valid_screenshot'] = False
+            result['analysis_notes'] = 'Invalid stats range detected; rejected.'
+        return result
     
     def _fallback_analysis(self) -> Dict[str, Any]:
         """
@@ -176,28 +208,27 @@ If the image is not a valid FIFA match statistics screenshot, set is_valid_scree
         Returns:
             Dict with simulated statistics for testing
         """
-        import random
-        
-        # Generate random but realistic stats for testing
-        goals = random.randint(0, 5)
-        assists = random.randint(0, 2)
-        possession = random.randint(35, 65)
-        shots = random.randint(3, 15)
-        shots_on_target = random.randint(1, min(shots, 8))
-        pass_accuracy = random.randint(60, 95)
-        tackles = random.randint(0, 8)
-        
+        if not self.allow_fallback_scoring:
+            return {
+                'success': False,
+                'is_valid_screenshot': False,
+                'analysis_notes': 'AI unavailable and fallback scoring is disabled',
+                'error': 'AI validation unavailable',
+                'is_fallback': True
+            }
+
+        # Optional debug-only fallback mode.
         return {
             'success': True,
-            'is_valid_screenshot': True,
-            'goals': goals,
-            'assists': assists,
-            'possession': possession,
-            'shots': shots,
-            'shots_on_target': shots_on_target,
-            'pass_accuracy': pass_accuracy,
-            'tackles': tackles,
-            'analysis_notes': 'Fallback mode - API unavailable',
+            'is_valid_screenshot': False,
+            'goals': 0,
+            'assists': 0,
+            'possession': 0,
+            'shots': 0,
+            'shots_on_target': 0,
+            'pass_accuracy': 0,
+            'tackles': 0,
+            'analysis_notes': 'Fallback mode enabled; no points for unverified image',
             'is_fallback': True
         }
 

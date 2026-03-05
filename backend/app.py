@@ -618,6 +618,415 @@ def serve_uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
+@app.route('/api/admin/stats', methods=['GET'])
+@admin_required
+def admin_stats():
+    try:
+        total_users = User.query.count()
+        active_users = User.query.filter_by(is_active=True, is_banned=False).count()
+        banned_users = User.query.filter_by(is_banned=True).count()
+        inactive_users = max(total_users - active_users - banned_users, 0)
+
+        total_matches = Match.query.count()
+        today = datetime.utcnow().date()
+        today_matches = Match.query.filter(db.func.date(Match.date_uploaded) == today).count()
+        pending_matches = Match.query.filter_by(is_verified=False).count()
+        verified_matches = Match.query.filter_by(is_verified=True).count()
+
+        total_competitions = Competition.query.count()
+        active_competitions = Competition.query.filter_by(status='active').count()
+        upcoming_competitions = Competition.query.filter_by(status='upcoming').count()
+        finished_competitions = Competition.query.filter_by(status='finished').count()
+
+        return json_response(True, data={
+            'users': {
+                'total': total_users,
+                'active': active_users,
+                'inactive': inactive_users,
+                'banned': banned_users
+            },
+            'matches': {
+                'total': total_matches,
+                'today': today_matches,
+                'pending': pending_matches,
+                'verified': verified_matches
+            },
+            'competitions': {
+                'total': total_competitions,
+                'active': active_competitions,
+                'upcoming': upcoming_competitions,
+                'finished': finished_competitions
+            }
+        }, message='Admin stats retrieved successfully')
+    except Exception as e:
+        logger.error(f"Admin stats error: {e}")
+        return json_response(False, message='Failed to retrieve admin stats', status_code=500)
+
+
+@app.route('/api/admin/users', methods=['GET'])
+@admin_required
+def admin_users():
+    try:
+        status = (request.args.get('status') or '').strip().lower()
+        search = (request.args.get('search') or '').strip()
+
+        query = User.query
+        if status == 'active':
+            query = query.filter_by(is_active=True, is_banned=False)
+        elif status == 'inactive':
+            query = query.filter_by(is_active=False, is_banned=False)
+        elif status == 'banned':
+            query = query.filter_by(is_banned=True)
+
+        if search:
+            like = f'%{search}%'
+            query = query.filter((User.username.like(like)) | (User.email.like(like)))
+
+        users = query.order_by(User.total_score.desc()).all()
+        return json_response(True, data={'users': [u.to_dict(include_private=True) for u in users]}, message='Users retrieved successfully')
+    except Exception as e:
+        logger.error(f"Admin users error: {e}")
+        return json_response(False, message='Failed to retrieve users', status_code=500)
+
+
+@app.route('/api/admin/users/<int:user_id>/deactivate', methods=['POST'])
+@admin_required
+def admin_deactivate_user(user_id):
+    try:
+        if user_id == current_user.id:
+            return json_response(False, message='You cannot deactivate your own account', status_code=400)
+        user = User.query.get(user_id)
+        if not user:
+            return json_response(False, message='User not found', status_code=404)
+        user.is_active = False
+        db.session.commit()
+        create_notification(user.id, 'Your account has been deactivated by admin.', title='Account Update', notification_type='warning')
+        return json_response(True, message='User deactivated successfully')
+    except Exception as e:
+        logger.error(f"Deactivate user error: {e}")
+        db.session.rollback()
+        return json_response(False, message='Failed to deactivate user', status_code=500)
+
+
+@app.route('/api/admin/users/<int:user_id>/ban', methods=['POST'])
+@admin_required
+def admin_ban_user(user_id):
+    try:
+        if user_id == current_user.id:
+            return json_response(False, message='You cannot ban your own account', status_code=400)
+        user = User.query.get(user_id)
+        if not user:
+            return json_response(False, message='User not found', status_code=404)
+        user.is_banned = True
+        user.is_active = False
+        db.session.commit()
+        create_notification(user.id, 'Your account has been banned by admin.', title='Account Update', notification_type='danger')
+        return json_response(True, message='User banned successfully')
+    except Exception as e:
+        logger.error(f"Ban user error: {e}")
+        db.session.rollback()
+        return json_response(False, message='Failed to ban user', status_code=500)
+
+
+@app.route('/api/admin/users/<int:user_id>/activate', methods=['POST'])
+@admin_required
+def admin_activate_user(user_id):
+    try:
+        user = User.query.get(user_id)
+        if not user:
+            return json_response(False, message='User not found', status_code=404)
+        user.is_banned = False
+        user.is_active = True
+        db.session.commit()
+        create_notification(user.id, 'Your account has been activated by admin.', title='Account Update', notification_type='success')
+        return json_response(True, message='User activated successfully')
+    except Exception as e:
+        logger.error(f"Activate user error: {e}")
+        db.session.rollback()
+        return json_response(False, message='Failed to activate user', status_code=500)
+
+
+@app.route('/api/admin/matches', methods=['GET'])
+@admin_required
+def admin_matches():
+    try:
+        status = (request.args.get('status') or '').strip().lower()
+        search = (request.args.get('search') or '').strip()
+        competition_id = request.args.get('competition_id', type=int)
+        date_str = (request.args.get('date') or '').strip()
+
+        query = Match.query.join(User, Match.user_id == User.id)
+        if status == 'verified':
+            query = query.filter(Match.is_verified == True)
+        elif status == 'pending':
+            query = query.filter(Match.is_verified == False)
+        elif status == 'rejected':
+            query = query.filter(Match.rejection_reason.isnot(None))
+        if search:
+            like = f'%{search}%'
+            query = query.filter((User.username.like(like)) | (User.email.like(like)))
+        if competition_id:
+            query = query.filter(Match.competition_id == competition_id)
+        if date_str:
+            query = query.filter(db.func.date(Match.date_uploaded) == date_str)
+
+        matches = query.order_by(Match.date_uploaded.desc()).all()
+        payload = []
+        for m in matches:
+            item = m.to_dict()
+            item['username'] = m.user.username if m.user else None
+            item['email'] = m.user.email if m.user else None
+            payload.append(item)
+        return json_response(True, data={'matches': payload}, message='Matches retrieved successfully')
+    except Exception as e:
+        logger.error(f"Admin matches error: {e}")
+        return json_response(False, message='Failed to retrieve matches', status_code=500)
+
+
+@app.route('/api/admin/matches/<int:match_id>', methods=['GET'])
+@admin_required
+def admin_match_detail(match_id):
+    try:
+        m = Match.query.get(match_id)
+        if not m:
+            return json_response(False, message='Match not found', status_code=404)
+        item = m.to_dict()
+        item['username'] = m.user.username if m.user else None
+        item['email'] = m.user.email if m.user else None
+        return json_response(True, data={'match': item, 'stats': {
+            'goals': m.goals,
+            'assists': m.assists,
+            'possession': m.possession,
+            'shots': m.shots,
+            'shots_on_target': m.shots_on_target,
+            'pass_accuracy': m.pass_accuracy,
+            'tackles': m.tackles
+        }}, message='Match retrieved successfully')
+    except Exception as e:
+        logger.error(f"Admin match detail error: {e}")
+        return json_response(False, message='Failed to retrieve match', status_code=500)
+
+
+@app.route('/api/admin/matches/<int:match_id>/verify', methods=['POST'])
+@admin_required
+def admin_verify_match(match_id):
+    try:
+        m = Match.query.get(match_id)
+        if not m:
+            return json_response(False, message='Match not found', status_code=404)
+        m.is_verified = True
+        m.rejection_reason = None
+        db.session.commit()
+        create_notification(m.user_id, 'Your match has been verified by admin.', title='Match Verified', notification_type='success')
+        return json_response(True, message='Match verified successfully')
+    except Exception as e:
+        logger.error(f"Verify match error: {e}")
+        db.session.rollback()
+        return json_response(False, message='Failed to verify match', status_code=500)
+
+
+@app.route('/api/admin/matches/<int:match_id>/reject', methods=['POST'])
+@admin_required
+def admin_reject_match(match_id):
+    try:
+        m = Match.query.get(match_id)
+        if not m:
+            return json_response(False, message='Match not found', status_code=404)
+        reason = (request.get_json() or {}).get('reason', 'Rejected by admin')
+        m.is_verified = False
+        m.rejection_reason = reason
+        db.session.commit()
+        create_notification(m.user_id, f'Your match was rejected: {reason}', title='Match Rejected', notification_type='warning')
+        return json_response(True, message='Match rejected successfully')
+    except Exception as e:
+        logger.error(f"Reject match error: {e}")
+        db.session.rollback()
+        return json_response(False, message='Failed to reject match', status_code=500)
+
+
+@app.route('/api/admin/competitions', methods=['GET'])
+@admin_required
+def admin_competitions():
+    try:
+        comps = Competition.query.order_by(Competition.created_at.desc()).all()
+        return json_response(True, data={'competitions': [c.to_dict() for c in comps]}, message='Competitions retrieved successfully')
+    except Exception as e:
+        logger.error(f"Admin competitions error: {e}")
+        return json_response(False, message='Failed to retrieve competitions', status_code=500)
+
+
+@app.route('/api/admin/competitions/<int:competition_id>', methods=['PUT'])
+@admin_required
+def admin_update_competition(competition_id):
+    try:
+        c = Competition.query.get(competition_id)
+        if not c:
+            return json_response(False, message='Competition not found', status_code=404)
+        data = request.get_json() or {}
+        if 'name' in data:
+            c.name = data['name']
+        if 'description' in data:
+            c.description = data['description']
+        if 'start_date' in data:
+            c.start_date = datetime.fromisoformat(data['start_date']) if data['start_date'] else None
+        if 'end_date' in data:
+            c.end_date = datetime.fromisoformat(data['end_date']) if data['end_date'] else None
+        if 'status' in data:
+            c.status = data['status']
+        db.session.commit()
+        return json_response(True, message='Competition updated successfully')
+    except Exception as e:
+        logger.error(f"Update competition error: {e}")
+        db.session.rollback()
+        return json_response(False, message='Failed to update competition', status_code=500)
+
+
+@app.route('/api/admin/competitions/<int:competition_id>/start', methods=['POST'])
+@admin_required
+def admin_start_competition(competition_id):
+    try:
+        c = Competition.query.get(competition_id)
+        if not c:
+            return json_response(False, message='Competition not found', status_code=404)
+        c.status = 'active'
+        if not c.start_date:
+            c.start_date = datetime.utcnow()
+        db.session.commit()
+        return json_response(True, message='Competition started successfully')
+    except Exception as e:
+        logger.error(f"Start competition error: {e}")
+        db.session.rollback()
+        return json_response(False, message='Failed to start competition', status_code=500)
+
+
+@app.route('/api/admin/competitions/<int:competition_id>/end', methods=['POST'])
+@admin_required
+def admin_end_competition(competition_id):
+    try:
+        c = Competition.query.get(competition_id)
+        if not c:
+            return json_response(False, message='Competition not found', status_code=404)
+        c.status = 'finished'
+        if not c.end_date:
+            c.end_date = datetime.utcnow()
+        db.session.commit()
+        return json_response(True, message='Competition ended successfully')
+    except Exception as e:
+        logger.error(f"End competition error: {e}")
+        db.session.rollback()
+        return json_response(False, message='Failed to end competition', status_code=500)
+
+
+@app.route('/api/admin/notifications', methods=['GET'])
+@admin_required
+def admin_notifications():
+    try:
+        limit = request.args.get('limit', 50, type=int)
+        notifications = Notification.query.filter_by(user_id=current_user.id).order_by(Notification.date_created.desc()).limit(limit).all()
+        unread_count = sum(1 for n in notifications if not n.is_read)
+        return json_response(True, data={
+            'notifications': [n.to_dict() for n in notifications],
+            'unread_count': unread_count
+        }, message='Notifications retrieved successfully')
+    except Exception as e:
+        logger.error(f"Admin notifications error: {e}")
+        return json_response(False, message='Failed to retrieve notifications', status_code=500)
+
+
+@app.route('/api/admin/notifications/<int:notification_id>', methods=['DELETE'])
+@admin_required
+def admin_delete_notification(notification_id):
+    try:
+        n = Notification.query.filter_by(id=notification_id, user_id=current_user.id).first()
+        if not n:
+            return json_response(False, message='Notification not found', status_code=404)
+        db.session.delete(n)
+        db.session.commit()
+        return json_response(True, message='Notification deleted successfully')
+    except Exception as e:
+        logger.error(f"Admin delete notification error: {e}")
+        db.session.rollback()
+        return json_response(False, message='Failed to delete notification', status_code=500)
+
+
+@app.route('/api/admin/announcements', methods=['POST'])
+@admin_required
+def admin_send_announcement():
+    try:
+        data = request.get_json() or {}
+        title = (data.get('title') or 'Announcement').strip()
+        message = (data.get('message') or '').strip()
+        recipients = (data.get('recipients') or 'all').strip().lower()
+        specific_username = (data.get('specific_username') or '').strip()
+
+        if not message:
+            return json_response(False, message='Message is required', status_code=400)
+
+        query = User.query.filter_by(is_admin=False)
+        if recipients == 'active':
+            query = query.filter_by(is_active=True, is_banned=False)
+        elif recipients == 'specific':
+            if not specific_username:
+                return json_response(False, message='Specific username is required for this recipient option', status_code=400)
+            query = query.filter_by(username=specific_username)
+
+        targets = query.all()
+        for u in targets:
+            create_notification(u.id, message, title=title, notification_type='info')
+
+        create_notification(current_user.id, f'Announcement sent to {len(targets)} user(s).', title='Announcement Sent', notification_type='success')
+        return json_response(True, data={'sent_count': len(targets)}, message='Announcement sent successfully')
+    except Exception as e:
+        logger.error(f"Announcement error: {e}")
+        return json_response(False, message='Failed to send announcement', status_code=500)
+
+
+@app.route('/api/admin/ai-status', methods=['GET'])
+@admin_required
+def admin_ai_status():
+    try:
+        from services.api_key_manager import get_api_usage_stats
+        return json_response(True, data=get_api_usage_stats(), message='AI key status retrieved successfully')
+    except Exception as e:
+        logger.error(f"AI status error: {e}")
+        return json_response(False, message='Failed to retrieve AI key status', status_code=500)
+
+
+@app.route('/api/admin/ai-keys', methods=['POST'])
+@admin_required
+def admin_add_ai_key():
+    try:
+        from services.api_key_manager import api_key_manager
+        key = ((request.get_json() or {}).get('key') or '').strip()
+        if not key:
+            return json_response(False, message='API key is required', status_code=400)
+        if key in api_key_manager.keys:
+            return json_response(False, message='API key already exists', status_code=400)
+        api_key_manager.keys.append(key)
+        api_key_manager.key_usage[key] = 0
+        api_key_manager.key_errors[key] = 0
+        return json_response(True, data=api_key_manager.get_usage_stats(), message='API key added successfully')
+    except Exception as e:
+        logger.error(f"Add AI key error: {e}")
+        return json_response(False, message='Failed to add API key', status_code=500)
+
+
+@app.route('/api/admin/ai-keys/reload', methods=['POST'])
+@admin_required
+def admin_reload_ai_keys():
+    try:
+        from services.api_key_manager import api_key_manager
+        api_key_manager.keys = []
+        api_key_manager.key_usage = {}
+        api_key_manager.key_errors = {}
+        api_key_manager.current_key_index = 0
+        api_key_manager._load_keys()
+        return json_response(True, data=api_key_manager.get_usage_stats(), message='AI keys reloaded from .env')
+    except Exception as e:
+        logger.error(f"Reload AI keys error: {e}")
+        return json_response(False, message='Failed to reload AI keys', status_code=500)
+
+
 @app.route("/health")
 def health():
     return {"status": "ok"}
