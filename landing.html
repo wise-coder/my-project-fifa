@@ -230,6 +230,25 @@
             flex-wrap: wrap;
         }
 
+        .quick-links {
+            margin-top: 34px;
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .quick-links a {
+            color: var(--secondary-text);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.2s ease;
+        }
+
+        .quick-links a:hover {
+            color: var(--accent-color);
+        }
+
         .feature-item {
             text-align: center;
             padding: 20px;
@@ -329,6 +348,13 @@
                 <i class="fas fa-bell"></i>
                 <span>Notifications</span>
             </div>
+        </div>
+
+        <div class="quick-links">
+            <a href="about.html">About</a>
+            <a href="privacy-policy.html">Privacy Policy</a>
+            <a href="terms-of-service.html">Terms of Service</a>
+            <a href="contact.html">Contact</a>
         </div>
     </div>
 

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - FIFA Stats</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Roboto:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: #121212;
+            --secondary-bg: #1E1E1E;
+            --primary-text: #FFFFFF;
+            --secondary-text: #B0B0B0;
+            --accent-color: #00FF88;
+            --border-color: #3D3D3D;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--primary-bg);
+            color: var(--primary-text);
+        }
+
+        .container-wrap {
+            max-width: 900px;
+            margin: 32px auto;
+            padding: 0 20px 40px;
+        }
+
+        .card-contact {
+            background: rgba(30, 30, 30, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 28px;
+        }
+
+        h1,
+        h2 {
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        h1 {
+            color: var(--accent-color);
+            margin-bottom: 10px;
+        }
+
+        p,
+        li {
+            color: var(--secondary-text);
+            line-height: 1.8;
+        }
+
+        .contact-item {
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .contact-item:last-child {
+            border-bottom: none;
+        }
+
+        .contact-label {
+            color: var(--primary-text);
+            font-weight: 500;
+        }
+
+        a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-wrap">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <a href="landing.html">Back to Home</a>
+            <a href="about.html">About</a>
+        </div>
+        <div class="card-contact">
+            <h1>Contact Us</h1>
+            <p>
+                Need help with account access, scoring issues, uploads, or moderation? Reach out using the details below.
+            </p>
+
+            <div class="contact-item">
+                <div class="contact-label">Support Email</div>
+                <div><a href="mailto:support@fifastats.com">support@fifastats.com</a></div>
+            </div>
+
+            <div class="contact-item">
+                <div class="contact-label">Admin</div>
+                <div><a href="mailto:admin@fifastats.com">serge.wiseabijuru5@gmail.com</a></div>
+            </div>
+
+            <div class="contact-item">
+                <div class="contact-label">Typical Response Time</div>
+                <div>24-48 hours (Monday to Friday)</div>
+            </div>
+
+            <div class="contact-item">
+                <div class="contact-label">Helpful Information to Include</div>
+                <ul class="mb-0 mt-2">
+                    <li>Your username</li>
+                    <li>Issue description and exact time</li>
+                    <li>Screenshot of the error (if available)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
