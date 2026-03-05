@@ -9,7 +9,7 @@
 // CONFIGURATION
 // ============================================
 
-const API_BASE_URL = 'https://fifa-fighters.onrender.com/api';
+const API_BASE_URL = window.APP_CONFIG?.API_BASE_URL || 'https://fifa-fighters.onrender.com/api';
 
 // ============================================
 // GLOBAL VARIABLES
