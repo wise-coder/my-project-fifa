@@ -92,6 +92,28 @@ class AIAnalyzer:
                 ordered.append(name)
                 seen.add(name)
         return ordered
+
+    @staticmethod
+    def _normalize_model_name(name: str) -> str:
+        if not name:
+            return ''
+        return name.replace('models/', '').strip()
+
+    def _discover_models_for_key(self, api_key: str) -> List[str]:
+        """Discover generateContent-capable models for a specific key."""
+        discovered: List[str] = []
+        try:
+            genai.configure(api_key=api_key)
+            for m in genai.list_models():
+                methods = getattr(m, 'supported_generation_methods', []) or []
+                if 'generateContent' in methods:
+                    model_name = self._normalize_model_name(getattr(m, 'name', ''))
+                    # Keep only Gemini models for this app.
+                    if model_name.startswith('gemini'):
+                        discovered.append(model_name)
+        except Exception as e:
+            logger.warning(f"Model discovery failed for key {api_key[:10]}...: {e}")
+        return discovered
     
     def analyze_screenshot(self, image_path: str) -> Dict[str, Any]:
         """
@@ -145,8 +167,10 @@ If the image is not a valid FIFA match statistics screenshot, set is_valid_scree
         for api_key in candidate_keys:
             try:
                 genai.configure(api_key=api_key)
+                discovered_models = self._discover_models_for_key(api_key)
+                model_candidates = list(dict.fromkeys(discovered_models + self._get_candidate_models()))
                 with Image.open(image_path) as img:
-                    for model_name in self._get_candidate_models():
+                    for model_name in model_candidates:
                         try:
                             model = genai.GenerativeModel(model_name)
                             response = model.generate_content([prompt, img.copy()])

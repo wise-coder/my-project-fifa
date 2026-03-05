@@ -1032,22 +1032,22 @@ def admin_ai_test():
         payload = request.get_json(silent=True) or {}
         requested_key = (payload.get('key') or '').strip()
         requested_model = (payload.get('model') or '').strip()
-        model_candidates = []
-        if requested_model:
-            model_candidates.append(requested_model)
-        else:
-            env_model = (os.getenv('GEMINI_MODEL') or '').strip()
-            if env_model:
-                model_candidates.append(env_model)
-            model_candidates.extend([
-                'gemini-2.0-flash',
-                'gemini-2.0-flash-lite',
-                'gemini-1.5-flash',
-                'gemini-1.5-flash-8b',
-                'gemini-1.5-pro'
-            ])
-        # de-dup
-        model_candidates = list(dict.fromkeys([m for m in model_candidates if m]))
+
+        def normalize_model_name(name):
+            return (name or '').replace('models/', '').strip()
+
+        def discover_models_for_key():
+            discovered = []
+            try:
+                for m in genai.list_models():
+                    methods = getattr(m, 'supported_generation_methods', []) or []
+                    if 'generateContent' in methods:
+                        n = normalize_model_name(getattr(m, 'name', ''))
+                        if n.startswith('gemini'):
+                            discovered.append(n)
+            except Exception:
+                pass
+            return discovered
 
         keys_to_test = []
         if requested_key:
@@ -1063,6 +1063,23 @@ def admin_ai_test():
             key_prefix = key[:10] + '...' if len(key) > 10 else key
             try:
                 genai.configure(api_key=key)
+                model_candidates = []
+                if requested_model:
+                    model_candidates.append(normalize_model_name(requested_model))
+                else:
+                    discovered = discover_models_for_key()
+                    env_model = normalize_model_name(os.getenv('GEMINI_MODEL', ''))
+                    preferred = [
+                        env_model,
+                        'gemini-2.0-flash',
+                        'gemini-2.0-flash-lite',
+                        'gemini-1.5-flash',
+                        'gemini-1.5-flash-8b',
+                        'gemini-1.5-pro'
+                    ]
+                    model_candidates = discovered + preferred
+                model_candidates = list(dict.fromkeys([m for m in model_candidates if m]))
+
                 ok = False
                 used_model = None
                 text = ''
