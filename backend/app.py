@@ -986,7 +986,10 @@ def admin_send_announcement():
 def admin_ai_status():
     try:
         from services.api_key_manager import get_api_usage_stats
-        return json_response(True, data=get_api_usage_stats(), message='AI key status retrieved successfully')
+        from services.ai_analyzer import GENAI_AVAILABLE
+        stats = get_api_usage_stats()
+        stats['genai_library_available'] = GENAI_AVAILABLE
+        return json_response(True, data=stats, message='AI key status retrieved successfully')
     except Exception as e:
         logger.error(f"AI status error: {e}")
         return json_response(False, message='Failed to retrieve AI key status', status_code=500)

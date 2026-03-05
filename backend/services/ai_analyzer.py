@@ -42,9 +42,9 @@ class AIAnalyzer:
         if GENAI_AVAILABLE:
             self._configure_model()
     
-    def _configure_model(self) -> None:
-        """Configure the Gemini model with an available API key."""
-        api_key = api_key_manager.get_key()
+    def _configure_model(self, api_key: str = None) -> None:
+        """Configure the Gemini model with a provided key (or next available key)."""
+        api_key = api_key or api_key_manager.get_key()
         if api_key:
             try:
                 genai.configure(api_key=api_key)
@@ -53,6 +53,10 @@ class AIAnalyzer:
             except Exception as e:
                 logger.error(f"Failed to configure AI model: {e}")
                 self.model = None
+
+    def _get_candidate_keys(self):
+        """Return API keys to try in order."""
+        return list(api_key_manager.keys or [])
     
     def analyze_screenshot(self, image_path: str) -> Dict[str, Any]:
         """
@@ -67,18 +71,13 @@ class AIAnalyzer:
         if not GENAI_AVAILABLE:
             return self._fallback_analysis()
         
-        if not self.model:
-            # Try to reconfigure
-            self._configure_model()
-            if not self.model:
-                return self._fallback_analysis()
+        candidate_keys = self._get_candidate_keys()
+        if not candidate_keys:
+            logger.warning("No Gemini API keys configured")
+            return self._fallback_analysis()
         
-        try:
-            # Upload the image
-            myfile = genai.upload_file(image_path)
-            
-            # Create the prompt
-            prompt = """You are a strict FIFA/football match statistics validator.
+        # Create the prompt once
+        prompt = """You are a strict FIFA/football match statistics validator.
 Only set is_valid_screenshot=true if this image clearly shows a real football match stats/result screen.
 If the image is a person photo, selfie, unrelated content, text-only poster, document, or unclear content, set is_valid_screenshot=false.
 Analyze this image and extract:
@@ -106,30 +105,29 @@ Respond in JSON format:
 }
 
 If the image is not a valid FIFA match statistics screenshot, set is_valid_screenshot to false."""
-            
-            # Generate content
-            response = self.model.generate_content([myfile, prompt])
-            
-            # Parse the response
-            result = self._parse_ai_response(response.text)
-            
-            # Record successful usage
-            api_key = api_key_manager.get_key()
-            if api_key:
+
+        last_error = None
+        for api_key in candidate_keys:
+            try:
+                self._configure_model(api_key=api_key)
+                if not self.model:
+                    api_key_manager.record_usage(api_key, success=False)
+                    continue
+
+                myfile = genai.upload_file(image_path)
+                response = self.model.generate_content([myfile, prompt])
+                result = self._parse_ai_response(response.text)
                 api_key_manager.record_usage(api_key, success=True)
-            
-            return result
-            
-        except Exception as e:
-            logger.error(f"Error analyzing screenshot: {e}")
-            
-            # Record failed usage
-            api_key = api_key_manager.get_key()
-            if api_key:
+                return result
+            except Exception as e:
+                last_error = e
+                logger.error(f"Error analyzing screenshot with key {api_key[:10]}...: {e}")
                 api_key_manager.record_usage(api_key, success=False)
-            
-            # Try fallback
-            return self._fallback_analysis()
+                continue
+
+        if last_error:
+            logger.error(f"All API keys failed for AI analysis: {last_error}")
+        return self._fallback_analysis()
     
     def _parse_ai_response(self, response_text: str) -> Dict[str, Any]:
         """
