@@ -923,6 +923,63 @@ def admin_competitions():
         return json_response(False, message='Failed to retrieve competitions', status_code=500)
 
 
+@app.route('/api/admin/competitions/schedule', methods=['POST'])
+@admin_required
+def admin_save_competition_schedule():
+    """
+    Save competition schedule without requiring explicit competition selection.
+    Admin only sets start/end time; backend chooses (or creates) the competition container.
+    """
+    try:
+        data = request.get_json() or {}
+        start_raw = (data.get('start_date') or '').strip()
+        end_raw = (data.get('end_date') or '').strip()
+
+        start_date = datetime.fromisoformat(start_raw) if start_raw else None
+        end_date = datetime.fromisoformat(end_raw) if end_raw else None
+
+        if start_date and end_date and end_date <= start_date:
+            return json_response(False, message='End time must be after start time', status_code=400)
+
+        # Prefer active/upcoming competition, then latest one, otherwise create default.
+        competition = Competition.query.filter(Competition.status.in_(['active', 'upcoming'])) \
+            .order_by(Competition.created_at.desc()).first()
+        if not competition:
+            competition = Competition.query.order_by(Competition.created_at.desc()).first()
+        if not competition:
+            competition = Competition(
+                name='Main Competition',
+                description='Auto-created competition schedule',
+                status='upcoming'
+            )
+            db.session.add(competition)
+
+        competition.start_date = start_date
+        competition.end_date = end_date
+
+        now = datetime.utcnow()
+        if end_date and end_date <= now:
+            competition.status = 'finished'
+        elif start_date and start_date <= now and (not end_date or end_date > now):
+            competition.status = 'active'
+        else:
+            competition.status = 'upcoming'
+
+        db.session.commit()
+        return json_response(
+            True,
+            data={'competition': competition.to_dict()},
+            message='Competition schedule saved successfully'
+        )
+    except ValueError:
+        db.session.rollback()
+        return json_response(False, message='Invalid date format', status_code=400)
+    except Exception as e:
+        logger.error(f"Save competition schedule error: {e}")
+        db.session.rollback()
+        return json_response(False, message='Failed to save competition schedule', status_code=500)
+
+
 @app.route('/api/admin/competitions/<int:competition_id>', methods=['PUT'])
 @admin_required
 def admin_update_competition(competition_id):

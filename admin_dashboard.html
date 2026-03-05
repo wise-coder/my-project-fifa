@@ -1642,18 +1642,10 @@
                 <div style="padding: 25px;">
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Select Competition</label>
-                            <select class="form-control-custom" id="competitionSelect">
-                                <option value="1">Winter Championship 2024</option>
-                                <option value="2">Spring Season 2024</option>
-                                <option value="3">Summer Cup</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3 mb-3">
                             <label class="form-label">Start Date & Time</label>
                             <input type="datetime-local" class="form-control-custom" id="competitionStartTime">
                         </div>
-                        <div class="col-md-3 mb-3">
+                        <div class="col-md-6 mb-3">
                             <label class="form-label">End Date & Time</label>
                             <input type="datetime-local" class="form-control-custom" id="competitionEndTime">
                         </div>
@@ -1669,7 +1661,7 @@
                  BACKEND INTEGRATION NOTE - COMPETITION
                  ============================================
                  GET /api/admin/competitions - Fetch all competitions
-                 PUT /api/admin/competitions/{id} - Update competition
+                 POST /api/admin/competitions/schedule - Save start/end schedule (auto competition)
                  POST /api/admin/competitions/{id}/start - Start competition
                  POST /api/admin/competitions/{id}/end - End competition
             -->
@@ -2633,15 +2625,25 @@
 
                 const competitions = response.data.competitions || [];
                 const grid = document.getElementById('competitionGrid');
-                const select = document.getElementById('competitionSelect');
+                const startInput = document.getElementById('competitionStartTime');
+                const endInput = document.getElementById('competitionEndTime');
 
                 grid.innerHTML = '';
-                select.innerHTML = '';
 
                 if (competitions.length === 0) {
                     grid.innerHTML = '<div class="data-card"><div style="padding:20px;">No competitions created yet.</div></div>';
-                    select.innerHTML = '<option value="">No competitions</option>';
+                    startInput.value = '';
+                    endInput.value = '';
                     return;
+                }
+
+                const scheduleSource =
+                    competitions.find(c => c.status === 'active') ||
+                    competitions.find(c => c.status === 'upcoming') ||
+                    competitions[0];
+                if (scheduleSource) {
+                    startInput.value = toDateTimeLocalValue(scheduleSource.start_date);
+                    endInput.value = toDateTimeLocalValue(scheduleSource.end_date);
                 }
 
                 competitions.forEach((comp) => {
@@ -2659,11 +2661,6 @@
                         </div>
                     `;
                     grid.appendChild(card);
-
-                    const option = document.createElement('option');
-                    option.value = comp.id;
-                    option.textContent = comp.name;
-                    select.appendChild(option);
                 });
             } catch (error) {
                 console.error('Error loading competitions:', error);
@@ -2671,17 +2668,16 @@
         }
 
         async function saveCompetitionSchedule() {
-            const competitionId = document.getElementById('competitionSelect').value;
             const startDate = document.getElementById('competitionStartTime').value;
             const endDate = document.getElementById('competitionEndTime').value;
 
-            if (!competitionId) {
-                showAlert('Select a competition first', 'warning');
+            if (!startDate && !endDate) {
+                showAlert('Set at least one time value (start or end)', 'warning');
                 return;
             }
 
             try {
-                await adminApiRequest(`/admin/competitions/${competitionId}`, 'PUT', {
+                await adminApiRequest('/admin/competitions/schedule', 'POST', {
                     start_date: startDate || null,
                     end_date: endDate || null
                 });
@@ -2691,6 +2687,15 @@
             } catch (error) {
                 showAlert('Failed to save schedule', 'error');
             }
+        }
+
+        function toDateTimeLocalValue(value) {
+            if (!value) return '';
+            const date = new Date(value);
+            if (Number.isNaN(date.getTime())) return '';
+            const offsetMs = date.getTimezoneOffset() * 60000;
+            const local = new Date(date.getTime() - offsetMs);
+            return local.toISOString().slice(0, 16);
         }
 
         async function startCompetition(compId) {
