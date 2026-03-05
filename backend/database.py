@@ -8,6 +8,7 @@ import os
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+import bcrypt
 
 # Initialize SQLAlchemy
 db = SQLAlchemy()
@@ -44,7 +45,21 @@ class User(db.Model):
     
     def check_password(self, password):
         """Verify password against hash."""
-        return check_password_hash(self.password_hash, password)
+        if not self.password_hash:
+            return False
+
+        # Primary path: Werkzeug hashes created by Flask registration.
+        try:
+            return check_password_hash(self.password_hash, password)
+        except (ValueError, TypeError):
+            # Compatibility path: legacy bcrypt hashes from previous Node backend.
+            try:
+                return bcrypt.checkpw(
+                    password.encode("utf-8"),
+                    self.password_hash.encode("utf-8")
+                )
+            except Exception:
+                return False
     
     def to_dict(self, include_private=False):
         """Convert user to dictionary."""
