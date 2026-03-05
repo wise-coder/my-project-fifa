@@ -7,6 +7,7 @@ SQLAlchemy database configuration and models.
 import os
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 import bcrypt
 
@@ -18,7 +19,7 @@ db = SQLAlchemy()
 # USER MODEL
 # ============================================
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     """User model for authentication and tracking."""
     
     __tablename__ = 'users'
