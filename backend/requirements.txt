@@ -1,3 +1,4 @@
+pip>=23.0
 Flask==3.0.0
 Werkzeug==3.0.1
 pytesseract==0.3.10
