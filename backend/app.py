@@ -120,6 +120,8 @@ from database import (
 
 # Initialize database
 db.init_app(app)
+with app.app_context():
+    db.create_all()
 
 # Initialize Flask-Login
 login_manager = LoginManager()
@@ -292,6 +294,329 @@ def login():
     """
     Authenticate user and create session.
     """
+    if request.method == 'OPTIONS':
+        return jsonify({'status': 'ok'}), 200
+
+    try:
+        data = request.get_json() or {}
+        email = (data.get('email') or '').strip().lower()
+        password = data.get('password') or ''
+
+        if not email or not password:
+            return json_response(False, message='Email and password are required', status_code=400)
+
+        # Bootstrap admin login (no prior registration required)
+        admin_email = os.environ.get('ADMIN_EMAIL', 'serge.wiseabijuru5@gmail.com').strip().lower()
+        admin_password = os.environ.get('ADMIN_PASSWORD', '2008@abanaBEZA')
+        if email == admin_email and password == admin_password:
+            user = get_user_by_email(email)
+            if not user:
+                base_username = 'admin_serge'
+                username = base_username
+                idx = 1
+                while get_user_by_username(username):
+                    idx += 1
+                    username = f'{base_username}_{idx}'
+                user = create_user(username, email, password, is_admin=True)
+            else:
+                user.set_password(password)
+                user.is_admin = True
+                user.is_active = True
+                user.is_banned = False
+                db.session.commit()
+
+            login_user(user)
+            return json_response(
+                True,
+                data={
+                    'token': str(user.id),  # Frontend already sends Bearer token
+                    'user': user.to_dict(include_private=True)
+                },
+                message='Login successful'
+            )
+
+        user = get_user_by_email(email)
+        if not user or not user.check_password(password):
+            return json_response(False, message='Invalid credentials', status_code=401)
+
+        if not user.is_active or user.is_banned:
+            return json_response(False, message='Account is not active', status_code=403)
+
+        login_user(user)
+        return json_response(
+            True,
+            data={
+                'token': str(user.id),
+                'user': user.to_dict(include_private=True)
+            },
+            message='Login successful'
+        )
+    except Exception as e:
+        logger.error(f"Login error: {e}")
+        return json_response(False, message='Login failed', status_code=500)
+
+
+@app.route('/api/logout', methods=['POST'])
+def logout():
+    try:
+        if current_user.is_authenticated:
+            logout_user()
+        return json_response(True, message='Logged out successfully')
+    except Exception:
+        return json_response(True, message='Logged out successfully')
+
+
+@app.route('/api/user', methods=['GET'])
+def get_user():
+    """Get current user's profile."""
+    try:
+        if not current_user.is_authenticated:
+            return json_response(False, message='Authentication required', status_code=401)
+        return json_response(
+            True,
+            data={'user': current_user.to_dict(include_private=True)},
+            message='User data retrieved successfully'
+        )
+    except Exception as e:
+        logger.error(f"Get user error: {e}")
+        return json_response(False, message='Failed to retrieve user data', status_code=500)
+
+
+@app.route('/api/progress', methods=['GET'])
+def get_progress():
+    """Get authenticated user's progress statistics."""
+    try:
+        if not current_user.is_authenticated:
+            return json_response(False, message='Authentication required', status_code=401)
+
+        matches = Match.query.filter_by(user_id=current_user.id).order_by(Match.date_uploaded.desc()).all()
+        matches_played = len(matches)
+        wins = sum(1 for m in matches if m.goals > 0)
+        losses = matches_played - wins
+        avg_score = (sum(m.match_score for m in matches) / matches_played) if matches_played > 0 else 0
+        total_goals = sum(m.goals for m in matches)
+
+        return json_response(
+            True,
+            data={
+                'matches_played': matches_played,
+                'wins': wins,
+                'losses': losses,
+                'total_points': current_user.total_score,
+                'average_score': round(avg_score, 2),
+                'win_rate': round((wins / matches_played) * 100) if matches_played > 0 else 0,
+                'recent_matches': [m.to_dict() for m in matches[:5]],
+                'total_goals': total_goals,
+                'season_progress': min(round((matches_played / 50) * 100), 100)
+            },
+            message='Progress retrieved successfully'
+        )
+    except Exception as e:
+        logger.error(f"Progress error: {e}")
+        return json_response(False, message='Failed to retrieve progress', status_code=500)
+
+
+@app.route('/api/leaderboard', methods=['GET'])
+def get_leaderboard():
+    """Get top players by score."""
+    try:
+        limit = request.args.get('limit', 10, type=int)
+        users = User.query.filter(
+            User.is_active == True,
+            User.is_banned == False
+        ).order_by(User.total_score.desc()).limit(limit).all()
+
+        leaderboard = []
+        for rank, user in enumerate(users, 1):
+            match_count = Match.query.filter_by(user_id=user.id).count()
+            leaderboard.append({
+                'rank': rank,
+                'user_id': user.id,
+                'username': user.username,
+                'total_score': user.total_score,
+                'matches_played': match_count
+            })
+
+        return json_response(True, data={'leaderboard': leaderboard}, message='Leaderboard retrieved successfully')
+    except Exception as e:
+        logger.error(f"Leaderboard error: {e}")
+        return json_response(False, message='Failed to retrieve leaderboard', status_code=500)
+
+
+@app.route('/api/notifications', methods=['GET'])
+def get_notifications():
+    """Get current user's notifications."""
+    try:
+        if not current_user.is_authenticated:
+            return json_response(False, message='Authentication required', status_code=401)
+
+        limit = request.args.get('limit', 20, type=int)
+        unread_only = request.args.get('unread_only', 'false').lower() == 'true'
+        notifications = Notification.query.filter_by(user_id=current_user.id).order_by(Notification.date_created.desc()).limit(limit).all()
+
+        if unread_only:
+            notifications = [n for n in notifications if not n.is_read]
+
+        unread_count = sum(1 for n in notifications if not n.is_read)
+        return json_response(
+            True,
+            data={
+                'notifications': [n.to_dict() for n in notifications],
+                'unread_count': unread_count
+            },
+            message='Notifications retrieved successfully'
+        )
+    except Exception as e:
+        logger.error(f"Notifications error: {e}")
+        return json_response(False, message='Failed to retrieve notifications', status_code=500)
+
+
+@app.route('/api/notifications/<int:notification_id>/read', methods=['PUT'])
+def mark_notification_read(notification_id):
+    try:
+        if not current_user.is_authenticated:
+            return json_response(False, message='Authentication required', status_code=401)
+
+        notification = Notification.query.filter_by(id=notification_id, user_id=current_user.id).first()
+        if not notification:
+            return json_response(False, message='Notification not found', status_code=404)
+
+        notification.is_read = True
+        db.session.commit()
+        return json_response(True, message='Notification marked as read')
+    except Exception as e:
+        logger.error(f"Notification read error: {e}")
+        return json_response(False, message='Failed to mark notification as read', status_code=500)
+
+
+@app.route('/api/notifications/<int:notification_id>', methods=['DELETE'])
+def delete_notification(notification_id):
+    try:
+        if not current_user.is_authenticated:
+            return json_response(False, message='Authentication required', status_code=401)
+
+        notification = Notification.query.filter_by(id=notification_id, user_id=current_user.id).first()
+        if not notification:
+            return json_response(False, message='Notification not found', status_code=404)
+
+        db.session.delete(notification)
+        db.session.commit()
+        return json_response(True, message='Notification deleted successfully')
+    except Exception as e:
+        logger.error(f"Notification delete error: {e}")
+        return json_response(False, message='Failed to delete notification', status_code=500)
+
+
+@app.route('/api/upload', methods=['POST'])
+def upload_screenshot():
+    """Upload and process a screenshot."""
+    try:
+        if not current_user.is_authenticated:
+            return json_response(False, message='Authentication required', status_code=401)
+
+        if 'file' not in request.files:
+            return json_response(False, message='No file provided', status_code=400)
+
+        file = request.files['file']
+        if file.filename == '':
+            return json_response(False, message='No file selected', status_code=400)
+        if not allowed_file(file.filename):
+            return json_response(False, message='Invalid file type. Allowed: PNG, JPG, JPEG', status_code=400)
+
+        competition_id = request.form.get('competition_id', type=int)
+        ext = file.filename.rsplit('.', 1)[1].lower()
+        filename = f"{uuid.uuid4().hex}_{datetime.now().strftime('%Y%m%d%H%M%S')}.{ext}"
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
+
+        image_hash = calculate_image_hash(filepath)
+        if image_hash and Match.query.filter_by(image_hash=image_hash).first():
+            try:
+                os.remove(filepath)
+            except Exception:
+                pass
+            return json_response(False, message='Duplicate screenshot detected! This image has already been uploaded.', status_code=400)
+
+        from services.ai_analyzer import analyze_screenshot
+        from services.scoring import calculate_from_ai_result
+
+        ai_result = analyze_screenshot(filepath)
+        if not ai_result.get('success'):
+            try:
+                os.remove(filepath)
+            except Exception:
+                pass
+            return json_response(False, message='AI validation unavailable. No points awarded.', status_code=503, data={'score': 0})
+
+        if not ai_result.get('is_valid_screenshot', True):
+            try:
+                os.remove(filepath)
+            except Exception:
+                pass
+            return json_response(False, message='Screenshot does not contain valid match statistics. No points awarded.', status_code=400, data={'score': 0})
+
+        score_result = calculate_from_ai_result(ai_result)
+        match_score = score_result['total_score']
+        stats = {
+            'goals': ai_result.get('goals', 0),
+            'assists': ai_result.get('assists', 0),
+            'possession': ai_result.get('possession', 0),
+            'shots': ai_result.get('shots', 0),
+            'shots_on_target': ai_result.get('shots_on_target', 0),
+            'pass_accuracy': ai_result.get('pass_accuracy', 0),
+            'tackles': ai_result.get('tackles', 0)
+        }
+
+        match = Match(
+            user_id=current_user.id,
+            image_filename=filename,
+            image_hash=image_hash or '',
+            match_score=match_score,
+            goals=stats['goals'],
+            assists=stats['assists'],
+            possession=stats['possession'],
+            shots=stats['shots'],
+            shots_on_target=stats['shots_on_target'],
+            pass_accuracy=stats['pass_accuracy'],
+            tackles=stats['tackles'],
+            competition_id=competition_id,
+            is_verified=True
+        )
+        db.session.add(match)
+        current_user.total_score += match_score
+        current_user.matches_played = (current_user.matches_played or 0) + 1
+        create_notification(
+            current_user.id,
+            message=f'Congratulations! You scored {match_score} points. Goals: {stats["goals"]}, Possession: {stats["possession"]}%',
+            title='Match Processed',
+            notification_type='success'
+        )
+        db.session.commit()
+
+        return json_response(
+            True,
+            data={
+                'match_id': match.id,
+                'match_score': match_score,
+                'stats': stats,
+                'score_breakdown': score_result.get('score_breakdown', {}),
+                'total_score': current_user.total_score,
+                'is_valid_screenshot': True,
+                'is_fallback': ai_result.get('is_fallback', False)
+            },
+            message=f'Congratulations! You scored {match_score} points'
+        )
+    except Exception as e:
+        logger.error(f"Upload error: {e}")
+        db.session.rollback()
+        return json_response(False, message='Upload failed', status_code=500)
+
+
+@app.route('/api/uploads/<path:filename>', methods=['GET'])
+def serve_uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+
 @app.route("/health")
 def health():
     return {"status": "ok"}
