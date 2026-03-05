@@ -6,7 +6,7 @@ Analyzes FIFA match screenshots using Google Gemini AI to extract match statisti
 
 import os
 import logging
-from typing import Dict, Any
+from typing import Dict, Any, List
 import json
 from PIL import Image
 
@@ -39,6 +39,7 @@ class AIAnalyzer:
     def __init__(self):
         """Initialize the AI analyzer."""
         self.model = None
+        self.model_name = None
         self.allow_fallback_scoring = os.getenv('ALLOW_FALLBACK_SCORING', 'false').lower() == 'true'
         if GENAI_AVAILABLE:
             self._configure_model()
@@ -49,16 +50,48 @@ class AIAnalyzer:
         if api_key:
             try:
                 genai.configure(api_key=api_key)
-                model_name = os.getenv('GEMINI_MODEL', 'gemini-1.5-flash')
-                self.model = genai.GenerativeModel(model_name)
-                logger.info("AI Analyzer configured successfully")
+                self.model = None
+                self.model_name = None
+                for model_name in self._get_candidate_models():
+                    try:
+                        self.model = genai.GenerativeModel(model_name)
+                        self.model_name = model_name
+                        logger.info(f"AI Analyzer configured with model: {model_name}")
+                        break
+                    except Exception:
+                        continue
             except Exception as e:
                 logger.error(f"Failed to configure AI model: {e}")
                 self.model = None
+                self.model_name = None
 
     def _get_candidate_keys(self):
         """Return API keys to try in order."""
         return list(api_key_manager.keys or [])
+
+    def _get_candidate_models(self) -> List[str]:
+        """Return preferred model names in fallback order."""
+        preferred = []
+        env_model = (os.getenv('GEMINI_MODEL') or '').strip()
+        if env_model:
+            preferred.append(env_model)
+
+        preferred.extend([
+            'gemini-2.0-flash',
+            'gemini-2.0-flash-lite',
+            'gemini-1.5-flash',
+            'gemini-1.5-flash-8b',
+            'gemini-1.5-pro'
+        ])
+
+        # Deduplicate while preserving order
+        seen = set()
+        ordered = []
+        for name in preferred:
+            if name and name not in seen:
+                ordered.append(name)
+                seen.add(name)
+        return ordered
     
     def analyze_screenshot(self, image_path: str) -> Dict[str, Any]:
         """
@@ -111,17 +144,19 @@ If the image is not a valid FIFA match statistics screenshot, set is_valid_scree
         last_error = None
         for api_key in candidate_keys:
             try:
-                self._configure_model(api_key=api_key)
-                if not self.model:
-                    api_key_manager.record_usage(api_key, success=False)
-                    continue
-
-                # Use direct image content to avoid upload-file API issues on some deployments.
+                genai.configure(api_key=api_key)
                 with Image.open(image_path) as img:
-                    response = self.model.generate_content([prompt, img])
-                result = self._parse_ai_response(response.text)
-                api_key_manager.record_usage(api_key, success=True)
-                return result
+                    for model_name in self._get_candidate_models():
+                        try:
+                            model = genai.GenerativeModel(model_name)
+                            response = model.generate_content([prompt, img.copy()])
+                            result = self._parse_ai_response(response.text)
+                            api_key_manager.record_usage(api_key, success=True)
+                            return result
+                        except Exception as model_err:
+                            last_error = model_err
+                            logger.warning(f"Model {model_name} failed for key {api_key[:10]}...: {model_err}")
+                            continue
             except Exception as e:
                 last_error = e
                 logger.error(f"Error analyzing screenshot with key {api_key[:10]}...: {e}")

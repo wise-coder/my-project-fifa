@@ -1031,7 +1031,23 @@ def admin_ai_test():
 
         payload = request.get_json(silent=True) or {}
         requested_key = (payload.get('key') or '').strip()
-        model_name = (payload.get('model') or os.getenv('GEMINI_MODEL', 'gemini-1.5-flash')).strip()
+        requested_model = (payload.get('model') or '').strip()
+        model_candidates = []
+        if requested_model:
+            model_candidates.append(requested_model)
+        else:
+            env_model = (os.getenv('GEMINI_MODEL') or '').strip()
+            if env_model:
+                model_candidates.append(env_model)
+            model_candidates.extend([
+                'gemini-2.0-flash',
+                'gemini-2.0-flash-lite',
+                'gemini-1.5-flash',
+                'gemini-1.5-flash-8b',
+                'gemini-1.5-pro'
+            ])
+        # de-dup
+        model_candidates = list(dict.fromkeys([m for m in model_candidates if m]))
 
         keys_to_test = []
         if requested_key:
@@ -1047,10 +1063,22 @@ def admin_ai_test():
             key_prefix = key[:10] + '...' if len(key) > 10 else key
             try:
                 genai.configure(api_key=key)
-                model = genai.GenerativeModel(model_name)
-                response = model.generate_content("Reply with exactly: OK")
-                text = (getattr(response, 'text', '') or '').strip()
-                ok = 'OK' in text.upper()
+                ok = False
+                used_model = None
+                text = ''
+                last_model_error = None
+                for model_name in model_candidates:
+                    try:
+                        model = genai.GenerativeModel(model_name)
+                        response = model.generate_content("Reply with exactly: OK")
+                        text = (getattr(response, 'text', '') or '').strip()
+                        ok = 'OK' in text.upper()
+                        used_model = model_name
+                        if ok:
+                            break
+                    except Exception as model_err:
+                        last_model_error = model_err
+                        continue
 
                 api_key_manager.key_usage[key] = api_key_manager.key_usage.get(key, 0) + 1
                 if ok:
@@ -1061,8 +1089,9 @@ def admin_ai_test():
                 results.append({
                     'key_prefix': key_prefix,
                     'status': 'ok' if ok else 'failed',
-                    'model': model_name,
-                    'response_preview': text[:80] if text else ''
+                    'model': used_model or (requested_model if requested_model else None),
+                    'response_preview': text[:80] if text else '',
+                    'error': str(last_model_error)[:200] if (not ok and last_model_error) else ''
                 })
             except Exception as key_err:
                 api_key_manager.key_usage[key] = api_key_manager.key_usage.get(key, 0) + 1
@@ -1070,7 +1099,7 @@ def admin_ai_test():
                 results.append({
                     'key_prefix': key_prefix,
                     'status': 'failed',
-                    'model': model_name,
+                    'model': requested_model if requested_model else None,
                     'error': str(key_err)[:200]
                 })
 
