@@ -1164,6 +1164,20 @@
                 </div>
             </div>
 
+            <div class="data-card" id="competitionCountdownCard">
+                <div class="data-card-header">
+                    <h3 class="data-card-title">
+                        <i class="fas fa-stopwatch"></i>
+                        Competition Countdown
+                    </h3>
+                </div>
+                <div style="padding: 10px 4px;">
+                    <h5 id="competitionName" style="margin: 0 0 8px 0;">No active competition</h5>
+                    <p id="competitionCountdownLabel" style="margin: 0 0 6px 0; color: var(--secondary-text);">Waiting for admin schedule</p>
+                    <div id="competitionCountdownValue" style="font-size: 1.5rem; font-weight: 700; color: var(--accent-color);">--:--:--</div>
+                </div>
+            </div>
+
             <!-- Recent Activity -->
             <div class="data-card">
                 <div class="data-card-header">
@@ -1387,6 +1401,7 @@
         // Store auth token
         let authToken = localStorage.getItem('authToken');
         let currentUser = null;
+        let competitionCountdownInterval = null;
 
         // ============================================
         // API FUNCTIONS
@@ -1470,7 +1485,8 @@
                     loadUserProfile(),
                     loadProgressData(),
                     loadLeaderboardData(),
-                    loadNotifications()
+                    loadNotifications(),
+                    loadCompetitionCountdown()
                 ]);
             } catch (error) {
                 console.error('Error loading dashboard data:', error);
@@ -1733,6 +1749,99 @@
             } catch (error) {
                 console.error('Error marking notification as read:', error);
             }
+        }
+
+        /**
+         * Load current competition and countdown timer.
+         */
+        async function loadCompetitionCountdown() {
+            try {
+                const response = await apiRequest('/competitions/current');
+                if (response.success && response.data) {
+                    renderCompetitionCountdown(response.data);
+                } else {
+                    renderCompetitionCountdown({ competition: null, countdown_type: 'none', countdown_target: null });
+                }
+            } catch (error) {
+                console.error('Error loading competition countdown:', error);
+                renderCompetitionCountdown({ competition: null, countdown_type: 'none', countdown_target: null });
+            }
+        }
+
+        function renderCompetitionCountdown(payload) {
+            const nameEl = document.getElementById('competitionName');
+            const labelEl = document.getElementById('competitionCountdownLabel');
+            const valueEl = document.getElementById('competitionCountdownValue');
+
+            const competition = payload.competition;
+            const countdownType = payload.countdown_type || 'none';
+            const countdownTarget = payload.countdown_target;
+
+            if (competition && competition.name) {
+                nameEl.textContent = competition.name;
+            } else {
+                nameEl.textContent = 'No active competition';
+            }
+
+            if (competitionCountdownInterval) {
+                clearInterval(competitionCountdownInterval);
+                competitionCountdownInterval = null;
+            }
+
+            if (!competition || countdownType === 'none') {
+                labelEl.textContent = 'Waiting for admin schedule';
+                valueEl.textContent = '--:--:--';
+                return;
+            }
+
+            if (countdownType === 'live' || !countdownTarget) {
+                labelEl.textContent = 'Competition is live now';
+                valueEl.textContent = 'LIVE';
+                return;
+            }
+
+            labelEl.textContent = countdownType === 'starts_in' ? 'Starts in' : 'Ends in';
+            const targetTime = new Date(countdownTarget).getTime();
+            if (Number.isNaN(targetTime)) {
+                valueEl.textContent = '--:--:--';
+                return;
+            }
+
+            const tick = () => {
+                const diff = targetTime - Date.now();
+                if (diff <= 0) {
+                    if (countdownType === 'starts_in') {
+                        labelEl.textContent = 'Competition is live now';
+                        valueEl.textContent = 'LIVE';
+                    } else {
+                        labelEl.textContent = 'Competition ended';
+                        valueEl.textContent = '00:00:00';
+                    }
+                    clearInterval(competitionCountdownInterval);
+                    competitionCountdownInterval = null;
+                    return;
+                }
+                valueEl.textContent = formatCountdown(diff);
+            };
+
+            tick();
+            competitionCountdownInterval = setInterval(tick, 1000);
+        }
+
+        function formatCountdown(ms) {
+            const totalSeconds = Math.floor(ms / 1000);
+            const days = Math.floor(totalSeconds / 86400);
+            const hours = Math.floor((totalSeconds % 86400) / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+
+            const hh = String(hours).padStart(2, '0');
+            const mm = String(minutes).padStart(2, '0');
+            const ss = String(seconds).padStart(2, '0');
+            if (days > 0) {
+                return `${days}d ${hh}:${mm}:${ss}`;
+            }
+            return `${hh}:${mm}:${ss}`;
         }
 
         async function deleteNotification(notificationId) {

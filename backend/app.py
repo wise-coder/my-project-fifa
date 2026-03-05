@@ -444,6 +444,68 @@ def get_leaderboard():
         return json_response(False, message='Failed to retrieve leaderboard', status_code=500)
 
 
+@app.route('/api/competitions/current', methods=['GET'])
+def get_current_competition():
+    """Get active/upcoming competition info and countdown target for authenticated user."""
+    try:
+        if not current_user.is_authenticated:
+            return json_response(False, message='Authentication required', status_code=401)
+
+        now = datetime.utcnow()
+        now_iso = now.isoformat() + 'Z'
+
+        # Priority 1: active competition (nearest ending one)
+        active_competition = Competition.query.filter_by(status='active') \
+            .order_by(Competition.end_date.asc(), Competition.start_date.desc()) \
+            .first()
+
+        if active_competition:
+            countdown_target = (active_competition.end_date.isoformat() + 'Z') if active_competition.end_date else None
+            countdown_type = 'ends_in' if active_competition.end_date else 'live'
+            return json_response(
+                True,
+                data={
+                    'competition': active_competition.to_dict(),
+                    'countdown_type': countdown_type,
+                    'countdown_target': countdown_target,
+                    'server_time': now_iso
+                },
+                message='Current competition retrieved successfully'
+            )
+
+        # Priority 2: upcoming competition (nearest starting one)
+        upcoming_competition = Competition.query.filter_by(status='upcoming') \
+            .order_by(Competition.start_date.asc(), Competition.created_at.asc()) \
+            .first()
+
+        if upcoming_competition:
+            countdown_target = (upcoming_competition.start_date.isoformat() + 'Z') if upcoming_competition.start_date else None
+            return json_response(
+                True,
+                data={
+                    'competition': upcoming_competition.to_dict(),
+                    'countdown_type': 'starts_in',
+                    'countdown_target': countdown_target,
+                    'server_time': now_iso
+                },
+                message='Upcoming competition retrieved successfully'
+            )
+
+        return json_response(
+            True,
+            data={
+                'competition': None,
+                'countdown_type': 'none',
+                'countdown_target': None,
+                'server_time': now_iso
+            },
+            message='No active or upcoming competitions'
+        )
+    except Exception as e:
+        logger.error(f"Current competition error: {e}")
+        return json_response(False, message='Failed to retrieve competition data', status_code=500)
+
+
 @app.route('/api/notifications', methods=['GET'])
 def get_notifications():
     """Get current user's notifications."""
