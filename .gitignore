@@ -1,0 +1,48 @@
+# Environment variables
+.env
+backend/.env
+.env.*
+backend/.env.*
+!.env.example
+!backend/.env.example
+
+# Secrets / keys / certificates
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+id_rsa
+id_rsa.pub
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node
+node_modules/
+backend/node_modules/
+
+# Database
+*.db
+*.sqlite
+
+# Uploads
+backend/uploads/*
+
+# OS
+.DS_Store
+Thumbs.db
+

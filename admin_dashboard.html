@@ -1,0 +1,2816 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - FIFA Stats</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+    <style>
+        /* ============================================
+           CSS VARIABLES & THEME
+           ============================================ */
+        :root {
+            --primary-bg: #121212;
+            --secondary-bg: #1E1E1E;
+            --tertiary-bg: #2D2D2D;
+            --primary-text: #FFFFFF;
+            --secondary-text: #B0B0B0;
+            --accent-color: #00FF88;
+            --accent-hover: #00CC6A;
+            --danger-color: #FF4757;
+            --warning-color: #FFA502;
+            --success-color: #2ED573;
+            --border-color: #3D3D3D;
+            --sidebar-width: 260px;
+            --navbar-height: 70px;
+            --admin-color: #9B59B6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--primary-text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ============================================
+           NAVBAR STYLES
+           ============================================ */
+        .navbar-custom {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--navbar-height);
+            background: var(--secondary-bg);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .navbar-brand-custom {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--primary-text);
+        }
+
+        .navbar-brand-custom .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--admin-color), #8E44AD);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .navbar-brand-custom .logo-icon i {
+            font-size: 24px;
+            color: white;
+        }
+
+        .navbar-brand-custom .brand-text {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .navbar-brand-custom .brand-text span {
+            color: var(--admin-color);
+        }
+
+        .admin-badge {
+            background: linear-gradient(135deg, var(--admin-color), #8E44AD);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-left: 10px;
+        }
+
+        .navbar-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-left: auto;
+        }
+
+        .navbar-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--admin-color), #8E44AD);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-avatar i {
+            color: white;
+        }
+
+        .user-name {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .notification-btn {
+            position: relative;
+            background: transparent;
+            border: none;
+            color: var(--secondary-text);
+            font-size: 1.2rem;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+        }
+
+        .notification-btn:hover {
+            color: var(--admin-color);
+            background: var(--tertiary-bg);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--danger-color);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-logout {
+            background: transparent;
+            border: 1px solid var(--danger-color);
+            color: var(--danger-color);
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-logout:hover {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: var(--primary-text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        /* ============================================
+           SIDEBAR STYLES
+           ============================================ */
+        .sidebar {
+            position: fixed;
+            top: var(--navbar-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--navbar-height));
+            background: var(--secondary-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 20px 0;
+            overflow-y: auto;
+            z-index: 900;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 15px;
+        }
+
+        .sidebar-header h4 {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--secondary-text);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-nav li {
+            margin: 5px 10px;
+        }
+
+        .sidebar-nav .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 14px 20px;
+            color: var(--secondary-text);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+
+        .sidebar-nav .nav-item:hover {
+            background: var(--tertiary-bg);
+            color: var(--primary-text);
+        }
+
+        .sidebar-nav .nav-item.active {
+            background: rgba(155, 89, 182, 0.15);
+            color: var(--admin-color);
+            border-left: 3px solid var(--admin-color);
+        }
+
+        .sidebar-nav .nav-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .sidebar-nav .nav-item .badge {
+            margin-left: auto;
+            background: var(--danger-color);
+            color: white;
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        /* ============================================
+           MAIN CONTENT AREA
+           ============================================ */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--navbar-height);
+            padding: 30px;
+            min-height: calc(100vh - var(--navbar-height));
+            background: var(--primary-bg);
+        }
+
+        .section-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: var(--primary-text);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title i {
+            color: var(--admin-color);
+        }
+
+        .section-subtitle {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.2rem;
+            color: var(--secondary-text);
+            margin-bottom: 20px;
+        }
+
+        /* ============================================
+           DASHBOARD SECTIONS
+           ============================================ */
+        .dashboard-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .dashboard-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ============================================
+           STATS CARDS
+           ============================================ */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--admin-color);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(155, 89, 182, 0.15);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+        }
+
+        .stat-icon i {
+            font-size: 1.8rem;
+            color: var(--admin-color);
+        }
+
+        .stat-icon.users {
+            background: rgba(52, 152, 219, 0.15);
+        }
+
+        .stat-icon.users i {
+            color: #3498DB;
+        }
+
+        .stat-icon.matches {
+            background: rgba(46, 213, 115, 0.15);
+        }
+
+        .stat-icon.matches i {
+            color: var(--success-color);
+        }
+
+        .stat-icon.competitions {
+            background: rgba(255, 165, 2, 0.15);
+        }
+
+        .stat-icon.competitions i {
+            color: var(--warning-color);
+        }
+
+        .stat-icon.active {
+            background: rgba(0, 255, 136, 0.15);
+        }
+
+        .stat-icon.active i {
+            color: var(--accent-color);
+        }
+
+        .stat-value {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-text);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--secondary-text);
+            font-size: 0.95rem;
+        }
+
+        /* ============================================
+           DATA TABLES
+           ============================================ */
+        .data-card {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .data-card-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .data-card-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            font-size: 1.3rem;
+            color: var(--primary-text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .data-card-title i {
+            color: var(--admin-color);
+        }
+
+        .table-filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .table-search {
+            position: relative;
+        }
+
+        .table-search input {
+            background: var(--tertiary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 15px 8px 35px;
+            color: var(--primary-text);
+            font-size: 0.9rem;
+            width: 200px;
+            transition: all 0.3s ease;
+        }
+
+        .table-search input:focus {
+            outline: none;
+            border-color: var(--admin-color);
+            width: 250px;
+        }
+
+        .table-search i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--secondary-text);
+        }
+
+        .filter-select {
+            background: var(--tertiary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 15px;
+            color: var(--primary-text);
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--admin-color);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table thead {
+            background: var(--tertiary-bg);
+        }
+
+        .data-table th {
+            padding: 16px 20px;
+            text-align: left;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--admin-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .data-table th:hover {
+            background: rgba(155, 89, 182, 0.1);
+        }
+
+        .data-table th i {
+            margin-left: 5px;
+            font-size: 0.8rem;
+            opacity: 0.5;
+        }
+
+        .data-table th.sorted i {
+            opacity: 1;
+            color: var(--admin-color);
+        }
+
+        .data-table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        .data-table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .data-table tbody tr:hover {
+            background: var(--tertiary-bg);
+        }
+
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* ============================================
+           USER STATUS & ACTIONS
+           ============================================ */
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-badge.active {
+            background: rgba(46, 213, 115, 0.15);
+            color: var(--success-color);
+        }
+
+        .status-badge.inactive {
+            background: rgba(176, 176, 176, 0.15);
+            color: var(--secondary-text);
+        }
+
+        .status-badge.banned {
+            background: rgba(255, 71, 87, 0.15);
+            color: var(--danger-color);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-action {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-deactivate {
+            background: rgba(255, 165, 2, 0.15);
+            color: var(--warning-color);
+        }
+
+        .btn-deactivate:hover {
+            background: var(--warning-color);
+            color: var(--primary-bg);
+        }
+
+        .btn-ban {
+            background: rgba(255, 71, 87, 0.15);
+            color: var(--danger-color);
+        }
+
+        .btn-ban:hover {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-activate {
+            background: rgba(46, 213, 115, 0.15);
+            color: var(--success-color);
+        }
+
+        .btn-activate:hover {
+            background: var(--success-color);
+            color: var(--primary-bg);
+        }
+
+        .btn-view {
+            background: rgba(52, 152, 219, 0.15);
+            color: #3498DB;
+        }
+
+        .btn-view:hover {
+            background: #3498DB;
+            color: white;
+        }
+
+        /* ============================================
+           COMPETITION MANAGEMENT
+           ============================================ */
+        .competition-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .competition-card {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+        }
+
+        .competition-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .competition-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+
+        .competition-status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .competition-status.active {
+            background: rgba(0, 255, 136, 0.15);
+            color: var(--accent-color);
+        }
+
+        .competition-status.upcoming {
+            background: rgba(255, 165, 2, 0.15);
+            color: var(--warning-color);
+        }
+
+        .competition-status.finished {
+            background: rgba(176, 176, 176, 0.15);
+            color: var(--secondary-text);
+        }
+
+        .competition-dates {
+            margin-bottom: 20px;
+        }
+
+        .competition-date {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .competition-date:last-child {
+            border-bottom: none;
+        }
+
+        .competition-date i {
+            color: var(--admin-color);
+            width: 20px;
+        }
+
+        .competition-date span {
+            color: var(--secondary-text);
+            font-size: 0.9rem;
+        }
+
+        .competition-date strong {
+            color: var(--primary-text);
+            margin-left: auto;
+        }
+
+        .form-label {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            color: var(--secondary-text);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-control-custom {
+            background: var(--tertiary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 15px;
+            color: var(--primary-text);
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .form-control-custom:focus {
+            outline: none;
+            border-color: var(--admin-color);
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, var(--admin-color), #8E44AD);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(155, 89, 182, 0.4);
+        }
+
+        /* ============================================
+           MATCH OVERVIEW
+           ============================================ */
+        .match-thumbnail {
+            width: 80px;
+            height: 50px;
+            border-radius: 6px;
+            object-fit: cover;
+            cursor: pointer;
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .match-thumbnail:hover {
+            border-color: var(--admin-color);
+            transform: scale(1.1);
+        }
+
+        .score-display {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--accent-color);
+        }
+
+        /* ============================================
+           NOTIFICATIONS PANEL
+           ============================================ */
+        .notifications-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 992px) {
+            .notifications-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .notification-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-item:hover {
+            background: var(--tertiary-bg);
+        }
+
+        .notification-item.unread {
+            background: rgba(155, 89, 182, 0.05);
+        }
+
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--tertiary-bg);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .notification-icon i {
+            font-size: 1rem;
+            color: var(--secondary-text);
+        }
+
+        .notification-icon.info {
+            background: rgba(52, 152, 219, 0.15);
+        }
+
+        .notification-icon.info i {
+            color: #3498DB;
+        }
+
+        .notification-icon.success {
+            background: rgba(46, 213, 115, 0.15);
+        }
+
+        .notification-icon.success i {
+            color: var(--success-color);
+        }
+
+        .notification-icon.warning {
+            background: rgba(255, 165, 2, 0.15);
+        }
+
+        .notification-icon.warning i {
+            color: var(--warning-color);
+        }
+
+        .notification-icon.danger {
+            background: rgba(255, 71, 87, 0.15);
+        }
+
+        .notification-icon.danger i {
+            color: var(--danger-color);
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-content h5 {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .notification-content p {
+            color: var(--secondary-text);
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+        }
+
+        .notification-time {
+            font-size: 0.75rem;
+            color: var(--secondary-text);
+            opacity: 0.7;
+        }
+
+        /* Announcement Form */
+        .announcement-card {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+        }
+
+        .announcement-card h3 {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .announcement-card h3 i {
+            color: var(--admin-color);
+        }
+
+        .announcement-form .form-group {
+            margin-bottom: 20px;
+        }
+
+        .announcement-form textarea {
+            background: var(--tertiary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            color: var(--primary-text);
+            width: 100%;
+            min-height: 150px;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        .announcement-form textarea:focus {
+            outline: none;
+            border-color: var(--admin-color);
+        }
+
+        .recipient-options {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .recipient-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .recipient-option input {
+            accent-color: var(--admin-color);
+        }
+
+        /* ============================================
+           MODAL STYLES
+           ============================================ */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content-custom {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header-custom {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header-custom h3 {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 1.3rem;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: var(--secondary-text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--danger-color);
+        }
+
+        .modal-body-custom {
+            padding: 25px;
+        }
+
+        .match-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .match-stat-item {
+            background: var(--tertiary-bg);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .match-stat-label {
+            color: var(--secondary-text);
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+        }
+
+        .match-stat-value {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--admin-color);
+        }
+
+        /* ============================================
+           ALERT TOAST
+           ============================================ */
+        .alert-toast {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            z-index: 3000;
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+        }
+
+        .alert-toast.show {
+            transform: translateX(0);
+        }
+
+        .alert-toast.success {
+            border-color: var(--accent-color);
+        }
+
+        .alert-toast.success .alert-toast-icon {
+            color: var(--accent-color);
+        }
+
+        .alert-toast.error {
+            border-color: var(--danger-color);
+        }
+
+        .alert-toast.error .alert-toast-icon {
+            color: var(--danger-color);
+        }
+
+        .alert-toast.warning {
+            border-color: var(--warning-color);
+        }
+
+        .alert-toast.warning .alert-toast-icon {
+            color: var(--warning-color);
+        }
+
+        /* ============================================
+           PAGINATION
+           ============================================ */
+        .pagination-container {
+            padding: 20px 25px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pagination-info {
+            color: var(--secondary-text);
+            font-size: 0.9rem;
+        }
+
+        .pagination-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-page {
+            background: var(--tertiary-bg);
+            border: 1px solid var(--border-color);
+            color: var(--primary-text);
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .btn-page:hover:not(:disabled) {
+            background: var(--admin-color);
+            border-color: var(--admin-color);
+        }
+
+        .btn-page:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-page.active {
+            background: var(--admin-color);
+            border-color: var(--admin-color);
+        }
+
+        /* ============================================
+           RESPONSIVE STYLES
+           ============================================ */
+        @media (max-width: 992px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .user-name {
+                display: none;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .navbar-brand-custom .brand-text {
+                font-size: 1.2rem;
+            }
+
+            .admin-badge {
+                display: none;
+            }
+
+            .main-content {
+                padding: 20px 15px;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .data-card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .table-filters {
+                width: 100%;
+            }
+
+            .table-search input {
+                width: 100%;
+            }
+
+            .table-search input:focus {
+                width: 100%;
+            }
+
+            .data-table {
+                font-size: 0.85rem;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 10px 12px;
+            }
+
+            .competition-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .btn-action {
+                font-size: 0.75rem;
+                padding: 5px 8px;
+            }
+        }
+
+        /* ============================================
+           EMPTY STATE
+           ============================================ */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .empty-state h4 {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            color: var(--secondary-text);
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: var(--secondary-text);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ============================================
+         NAVBAR
+         ============================================ -->
+    <nav class="navbar-custom">
+        <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <a href="admin_dashboard.html" class="navbar-brand-custom">
+            <div class="logo-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <span class="brand-text">FIFA <span>STATS</span></span>
+            <span class="admin-badge">ADMIN</span>
+        </a>
+
+        <div class="navbar-menu">
+            <div class="navbar-user">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <span class="user-name">Admin</span>
+                </div>
+
+                <button class="notification-btn" id="notificationBtn" onclick="switchSection('notifications')">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notificationBadge">5</span>
+                </button>
+
+                <a href="landing.html" class="btn-logout" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================================
+         SIDEBAR
+         ============================================ -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h4>Admin Panel</h4>
+        </div>
+        <ul class="sidebar-nav">
+            <li>
+                <a class="nav-item active" data-section="users" onclick="switchSection('users')">
+                    <i class="fas fa-users"></i>
+                    <span>Users</span>
+                    <span class="badge" id="usersBadge">124</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item" data-section="leaderboard" onclick="switchSection('leaderboard')">
+                    <i class="fas fa-trophy"></i>
+                    <span>Leaderboard</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item" data-section="competition" onclick="switchSection('competition')">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Competition</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item" data-section="matches" onclick="switchSection('matches')">
+                    <i class="fas fa-gamepad"></i>
+                    <span>Matches</span>
+                    <span class="badge" id="matchesBadge">48</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item" data-section="notifications" onclick="switchSection('notifications')">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- ============================================
+         MAIN CONTENT
+         ============================================ -->
+    <main class="main-content">
+
+        <!-- ============================================
+             USER MANAGEMENT SECTION
+             ============================================ -->
+        <section class="dashboard-section active" id="section-users">
+            <h2 class="section-title">
+                <i class="fas fa-users"></i>
+                User Management
+            </h2>
+
+            <!-- Stats Overview -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon users">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-value" id="totalUsers">124</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon active">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <div class="stat-value" id="activeUsers">118</div>
+                    <div class="stat-label">Active Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-user-clock"></i>
+                    </div>
+                    <div class="stat-value" id="inactiveUsers">4</div>
+                    <div class="stat-label">Inactive Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-user-slash"></i>
+                    </div>
+                    <div class="stat-value" id="bannedUsers">2</div>
+                    <div class="stat-label">Banned Users</div>
+                </div>
+            </div>
+
+            <!-- Users Table -->
+            <div class="data-card">
+                <div class="data-card-header">
+                    <h3 class="data-card-title">
+                        <i class="fas fa-list"></i>
+                        All Users
+                    </h3>
+                    <div class="table-filters">
+                        <div class="table-search">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="userSearchInput" placeholder="Search users..."
+                                onkeyup="filterUsers()">
+                        </div>
+                        <select class="filter-select" id="userStatusFilter" onchange="filterUsers()">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="banned">Banned</option>
+                        </select>
+                    </div>
+                </div>
+                <table class="data-table" id="usersTable">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable('users', 0)">Username <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable('users', 1)">Email <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable('users', 2)">Total Score <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable('users', 3)">Rank <i class="fas fa-sort"></i></th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <!-- Sample Data - Replace with API -->
+                    </tbody>
+                </table>
+                <div class="pagination-container">
+                    <span class="pagination-info" id="usersPaginationInfo">Showing 1-10 of 124 users</span>
+                    <div class="pagination-buttons">
+                        <button class="btn-page" id="usersPrevBtn" onclick="changePage('users', -1)" disabled>
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="btn-page active">1</button>
+                        <button class="btn-page">2</button>
+                        <button class="btn-page">3</button>
+                        <button class="btn-page">...</button>
+                        <button class="btn-page">13</button>
+                        <button class="btn-page" id="usersNextBtn" onclick="changePage('users', 1)">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================
+                 BACKEND INTEGRATION NOTE - USERS
+                 ============================================
+                 GET /api/admin/users - Fetch all users
+                 POST /api/admin/users/{id}/deactivate - Deactivate user
+                 POST /api/admin/users/{id}/ban - Ban user
+                 POST /api/admin/users/{id}/activate - Reactivate user
+            -->
+        </section>
+
+        <!-- ============================================
+             LEADERBOARD SECTION
+             ============================================ -->
+        <section class="dashboard-section" id="section-leaderboard">
+            <h2 class="section-title">
+                <i class="fas fa-trophy"></i>
+                Leaderboard Management
+            </h2>
+
+            <!-- Stats Overview -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon matches">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <div class="stat-value" id="currentLeader">#-</div>
+                    <div class="stat-label">Current Leader</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-value" id="topScore">2,850</div>
+                    <div class="stat-label">Highest Score</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon competitions">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-value" id="activePlayersCount">0</div>
+                    <div class="stat-label">Active Players</div>
+                </div>
+            </div>
+
+            <!-- Leaderboard Table -->
+            <div class="data-card">
+                <div class="data-card-header">
+                    <h3 class="data-card-title">
+                        <i class="fas fa-list-ol"></i>
+                        Player Rankings
+                    </h3>
+                    <div class="table-filters">
+                        <div class="table-search">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="leaderboardSearchInput" placeholder="Search players..."
+                                onkeyup="filterLeaderboard()">
+                        </div>
+                        <select class="filter-select" id="leaderboardSortSelect" onchange="sortLeaderboard()">
+                            <option value="rank">Sort by Rank</option>
+                            <option value="score">Sort by Score</option>
+                            <option value="matches">Sort by Matches</option>
+                        </select>
+                    </div>
+                </div>
+                <table class="data-table" id="leaderboardTable">
+                    <thead>
+                        <tr>
+                            <th onclick="sortLeaderboardTable(0)">Rank <i class="fas fa-sort"></i></th>
+                            <th onclick="sortLeaderboardTable(1)">Player <i class="fas fa-sort"></i></th>
+                            <th onclick="sortLeaderboardTable(2)">Total Score <i class="fas fa-sort"></i></th>
+                            <th onclick="sortLeaderboardTable(3)">Matches Played <i class="fas fa-sort"></i></th>
+                            <th onclick="sortLeaderboardTable(4)">Win Rate <i class="fas fa-sort"></i></th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboardTableBody">
+                        <!-- Sample Data - Replace with API -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ============================================
+                 BACKEND INTEGRATION NOTE - LEADERBOARD
+                 ============================================
+                 GET /api/admin/leaderboard - Fetch leaderboard data
+                 POST /api/admin/leaderboard/refresh - Refresh rankings
+            -->
+        </section>
+
+        <!-- ============================================
+             COMPETITION MANAGEMENT SECTION
+             ============================================ -->
+        <section class="dashboard-section" id="section-competition">
+            <h2 class="section-title">
+                <i class="fas fa-calendar-alt"></i>
+                Competition Management
+            </h2>
+
+            <!-- Competition Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon competitions">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="stat-value" id="totalCompetitions">0</div>
+                    <div class="stat-label">Total Competitions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon active">
+                        <i class="fas fa-play-circle"></i>
+                    </div>
+                    <div class="stat-value" id="activeCompetitions">0</div>
+                    <div class="stat-label">Active Competitions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-value" id="upcomingCompetitions">0</div>
+                    <div class="stat-label">Upcoming</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-value" id="finishedCompetitions">0</div>
+                    <div class="stat-label">Finished</div>
+                </div>
+            </div>
+
+            <!-- Competition Cards -->
+            <div class="competition-grid" id="competitionGrid">
+                <!-- Competition cards will be populated here -->
+            </div>
+
+            <!-- Set Competition Time -->
+            <div class="data-card mt-4">
+                <div class="data-card-header">
+                    <h3 class="data-card-title">
+                        <i class="fas fa-cog"></i>
+                        Set Competition Schedule
+                    </h3>
+                </div>
+                <div style="padding: 25px;">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Select Competition</label>
+                            <select class="form-control-custom" id="competitionSelect">
+                                <option value="1">Winter Championship 2024</option>
+                                <option value="2">Spring Season 2024</option>
+                                <option value="3">Summer Cup</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Start Date & Time</label>
+                            <input type="datetime-local" class="form-control-custom" id="competitionStartTime">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">End Date & Time</label>
+                            <input type="datetime-local" class="form-control-custom" id="competitionEndTime">
+                        </div>
+                    </div>
+                    <button class="btn-save" onclick="saveCompetitionSchedule()">
+                        <i class="fas fa-save"></i>
+                        Save Schedule
+                    </button>
+                </div>
+            </div>
+
+            <!-- ============================================
+                 BACKEND INTEGRATION NOTE - COMPETITION
+                 ============================================
+                 GET /api/admin/competitions - Fetch all competitions
+                 PUT /api/admin/competitions/{id} - Update competition
+                 POST /api/admin/competitions/{id}/start - Start competition
+                 POST /api/admin/competitions/{id}/end - End competition
+            -->
+        </section>
+
+        <!-- ============================================
+             MATCH OVERVIEW SECTION
+             ============================================ -->
+        <section class="dashboard-section" id="section-matches">
+            <h2 class="section-title">
+                <i class="fas fa-gamepad"></i>
+                Match Overview
+            </h2>
+
+            <!-- Match Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon matches">
+                        <i class="fas fa-futbol"></i>
+                    </div>
+                    <div class="stat-value" id="totalMatches">348</div>
+                    <div class="stat-label">Total Matches</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-day"></i>
+                    </div>
+                    <div class="stat-value" id="todayMatches">12</div>
+                    <div class="stat-label">Today's Matches</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon active">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-value" id="pendingReviews">5</div>
+                    <div class="stat-label">Pending Reviews</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-double"></i>
+                    </div>
+                    <div class="stat-value" id="verifiedMatches">0</div>
+                    <div class="stat-label">Verified Matches</div>
+                </div>
+            </div>
+
+            <!-- Matches Table -->
+            <div class="data-card">
+                <div class="data-card-header">
+                    <h3 class="data-card-title">
+                        <i class="fas fa-list"></i>
+                        All Matches
+                    </h3>
+                    <div class="table-filters">
+                        <div class="table-search">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="matchSearchInput" placeholder="Search by user..."
+                                onkeyup="filterMatches()">
+                        </div>
+                        <input type="date" class="filter-select" id="matchDateFilter" onchange="filterMatches()">
+                        <select class="filter-select" id="matchCompetitionFilter" onchange="filterMatches()">
+                            <option value="">All Competitions</option>
+                            <option value="1">Winter Championship</option>
+                            <option value="2">Spring Season</option>
+                        </select>
+                        <select class="filter-select" id="matchStatusFilter" onchange="filterMatches()">
+                            <option value="">All Status</option>
+                            <option value="verified">Verified</option>
+                            <option value="pending">Pending</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                </div>
+                <table class="data-table" id="matchesTable">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Match Date</th>
+                            <th>Screenshot</th>
+                            <th>Score</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="matchesTableBody">
+                        <!-- Sample Data - Replace with API -->
+                    </tbody>
+                </table>
+                <div class="pagination-container">
+                    <span class="pagination-info" id="matchesPaginationInfo">Showing 1-10 of 348 matches</span>
+                    <div class="pagination-buttons">
+                        <button class="btn-page" onclick="changePage('matches', -1)" disabled>
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="btn-page active">1</button>
+                        <button class="btn-page">2</button>
+                        <button class="btn-page">3</button>
+                        <button class="btn-page">...</button>
+                        <button class="btn-page">35</button>
+                        <button class="btn-page" onclick="changePage('matches', 1)">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================
+                 BACKEND INTEGRATION NOTE - MATCHES
+                 ============================================
+                 GET /api/admin/matches - Fetch all matches
+                 GET /api/admin/matches/{id} - Get match details
+                 POST /api/admin/matches/{id}/verify - Verify match
+                 POST /api/admin/matches/{id}/reject - Reject match
+            -->
+        </section>
+
+        <!-- ============================================
+             NOTIFICATIONS SECTION
+             ============================================ -->
+        <section class="dashboard-section" id="section-notifications">
+            <h2 class="section-title">
+                <i class="fas fa-bell"></i>
+                Notifications & Announcements
+            </h2>
+
+            <div class="notifications-grid">
+                <!-- System Notifications -->
+                <div class="data-card">
+                    <div class="data-card-header">
+                        <h3 class="data-card-title">
+                            <i class="fas fa-bell"></i>
+                            System Notifications
+                        </h3>
+                    </div>
+                    <ul class="notification-list" id="systemNotificationsList">
+                        <!-- Sample Notifications - Replace with API -->
+                    </ul>
+                </div>
+
+                <!-- Send Announcement -->
+                <div class="announcement-card">
+                    <h3>
+                        <i class="fas fa-paper-plane"></i>
+                        Send Announcement
+                    </h3>
+                    <form class="announcement-form" id="announcementForm" onsubmit="sendAnnouncement(event)">
+                        <div class="form-group">
+                            <label class="form-label">Recipients</label>
+                            <div class="recipient-options">
+                                <label class="recipient-option">
+                                    <input type="radio" name="recipients" value="all" checked>
+                                    <span>All Users</span>
+                                </label>
+                                <label class="recipient-option">
+                                    <input type="radio" name="recipients" value="active">
+                                    <span>Active Users</span>
+                                </label>
+                                <label class="recipient-option">
+                                    <input type="radio" name="recipients" value="specific">
+                                    <span>Specific User</span>
+                                </label>
+                            </div>
+                            <input type="text" class="form-control-custom" id="specificUserInput"
+                                placeholder="Enter username" style="display: none; margin-top: 10px;">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Announcement Title</label>
+                            <input type="text" class="form-control-custom" id="announcementTitle"
+                                placeholder="Enter announcement title" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Message</label>
+                            <textarea id="announcementMessage" placeholder="Enter your announcement message..."
+                                required></textarea>
+                        </div>
+                        <button type="submit" class="btn-save">
+                            <i class="fas fa-paper-plane"></i>
+                            Send Announcement
+                        </button>
+                    </form>
+                </div>
+
+                <!-- AI Keys Management -->
+                <div class="announcement-card">
+                    <h3>
+                        <i class="fas fa-key"></i>
+                        AI Keys Management
+                    </h3>
+                    <div class="form-group">
+                        <label class="form-label">Current AI Status</label>
+                        <div id="aiStatusSummary" style="font-size: 14px; color: var(--secondary-text);">Loading...</div>
+                        <button type="button" class="btn-save" style="margin-top: 10px;" onclick="reloadAIKeys()">
+                            <i class="fas fa-rotate"></i>
+                            Reload Keys From .env
+                        </button>
+                        <ul id="aiKeysList" class="notification-list" style="max-height: 220px; margin-top: 10px;"></ul>
+                    </div>
+                    <form class="announcement-form" onsubmit="addAIKey(event)">
+                        <div class="form-group">
+                            <label class="form-label">Add New API Key</label>
+                            <input type="text" class="form-control-custom" id="newAiKeyInput"
+                                placeholder="Paste Gemini API key" required>
+                        </div>
+                        <button type="submit" class="btn-save">
+                            <i class="fas fa-plus"></i>
+                            Add Key
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- ============================================
+                 BACKEND INTEGRATION NOTE - NOTIFICATIONS
+                 ============================================
+                 GET /api/admin/notifications - Fetch notifications
+                 POST /api/admin/notifications - Send notification
+                 POST /api/admin/announcements - Send announcement
+            -->
+        </section>
+
+    </main>
+
+    <!-- ============================================
+         MATCH DETAILS MODAL
+         ============================================ -->
+    <div class="modal-overlay" id="matchDetailsModal">
+        <div class="modal-content-custom">
+            <div class="modal-header-custom">
+                <h3><i class="fas fa-chart-bar"></i> Match Details</h3>
+                <button class="modal-close" onclick="closeMatchModal()">&times;</button>
+            </div>
+            <div class="modal-body-custom">
+                <div class="match-stats-grid" id="matchStatsContent">
+                    <!-- Populated dynamically -->
+                </div>
+                <div style="margin-top: 20px; text-align: center;">
+                    <img id="matchScreenshotPreview"
+                        style="max-width: 100%; border-radius: 8px; border: 2px solid var(--border-color);"
+                        alt="Match Screenshot">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         ALERT TOAST
+         ============================================ -->
+    <div class="alert-toast" id="alertToast">
+        <i class="fas fa-check-circle alert-toast-icon"></i>
+        <span id="alertToastMessage">Success!</span>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // ============================================
+        // API CONFIGURATION
+        // ============================================
+        const API_BASE_URL = 'http://127.0.0.1:5000/api';
+        const API_ORIGIN = API_BASE_URL.replace('/api', '');
+
+        // Store auth token
+        let authToken = localStorage.getItem('authToken');
+        let liveRefreshTimer = null;
+
+        // ============================================
+        // API FUNCTIONS
+        // ============================================
+
+        /**
+         * Make API request with authentication
+         */
+        async function adminApiRequest(endpoint, method = 'GET', body = null) {
+            const options = {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': authToken ? `Bearer ${authToken}` : ''
+                },
+                credentials: 'include'
+            };
+
+            if (body) {
+                options.body = JSON.stringify(body);
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'API request failed');
+                }
+
+                return data;
+            } catch (error) {
+                console.error('API Error:', error);
+                throw error;
+            }
+        }
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Check if admin is logged in
+            checkAdminAuth();
+
+            // Initialize components
+            setupEventListeners();
+
+            // Load real data from API
+            loadDashboardData();
+            startLiveRefresh();
+        });
+
+        /**
+         * Check if admin is authenticated
+         */
+        function checkAdminAuth() {
+            if (!authToken) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const user = localStorage.getItem('user');
+            if (user) {
+                try {
+                    const userData = JSON.parse(user);
+                    if (!userData.is_admin) {
+                        window.location.href = 'dashboard.html';
+                        return;
+                    }
+                    const usernameNode = document.querySelector('.user-name');
+                    if (usernameNode) usernameNode.textContent = userData.username || 'Admin';
+                } catch (e) {
+                    console.error('Error parsing user:', e);
+                }
+            }
+        }
+
+        /**
+         * Load all dashboard data from API
+         */
+        async function loadDashboardData() {
+            try {
+                await Promise.all([
+                    loadAdminStats(),
+                    loadUsers(),
+                    loadLeaderboard(),
+                    loadMatches(),
+                    loadNotifications(),
+                    loadCompetitions(),
+                    loadAIStatus()
+                ]);
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                showAlert('Error loading data from server', 'error');
+            }
+        }
+
+        function startLiveRefresh() {
+            if (liveRefreshTimer) clearInterval(liveRefreshTimer);
+            liveRefreshTimer = setInterval(() => {
+                loadDashboardData();
+            }, 15000);
+        }
+
+        /**
+         * Load admin statistics
+         */
+        async function loadAdminStats() {
+            try {
+                const response = await adminApiRequest('/admin/stats');
+
+                if (response.success && response.data) {
+                    const stats = response.data;
+
+                    // Update stats cards with real data
+                    document.getElementById('totalUsers').textContent = stats.users.total || 0;
+                    document.getElementById('activeUsers').textContent = stats.users.active || 0;
+                    document.getElementById('inactiveUsers').textContent = (stats.users.total - stats.users.active - stats.users.banned) || 0;
+                    document.getElementById('bannedUsers').textContent = stats.users.banned || 0;
+
+                    document.getElementById('totalMatches').textContent = stats.matches.total || 0;
+                    document.getElementById('todayMatches').textContent = stats.matches.today || 0;
+                    document.getElementById('pendingReviews').textContent = stats.matches.pending || 0;
+                    document.getElementById('verifiedMatches').textContent = stats.matches.verified || 0;
+
+                    document.getElementById('totalCompetitions').textContent = stats.competitions.total || 0;
+                    document.getElementById('activeCompetitions').textContent = stats.competitions.active || 0;
+                    document.getElementById('upcomingCompetitions').textContent = stats.competitions.upcoming || 0;
+                    document.getElementById('finishedCompetitions').textContent = stats.competitions.finished || 0;
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        /**
+         * Load users from API
+         */
+        async function loadUsers() {
+            try {
+                const search = encodeURIComponent((document.getElementById('userSearchInput')?.value || '').trim());
+                const status = encodeURIComponent(document.getElementById('userStatusFilter')?.value || '');
+                const response = await adminApiRequest(`/admin/users?search=${search}&status=${status}`);
+
+                if (response.success && response.data) {
+                    renderUsersTable(response.data.users);
+                    updateUsersBadge(response.data.users.length);
+                    updatePaginationInfo('users', response.data.users.length);
+                }
+            } catch (error) {
+                console.error('Error loading users:', error);
+                // Show empty state
+                renderUsersTable([]);
+            }
+        }
+
+        /**
+         * Render users table with real data
+         */
+        function renderUsersTable(users) {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4">No users found</td></tr>';
+                return;
+            }
+
+            // Sort users by total_score descending
+            users.sort((a, b) => (b.total_score || 0) - (a.total_score || 0));
+
+            users.forEach((user, index) => {
+                const rank = index + 1;
+                const status = user.is_banned ? 'banned' : (user.is_active ? 'active' : 'inactive');
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${user.username}</strong></td>
+                    <td>${user.email}</td>
+                    <td style="color: var(--accent-color); font-weight: 600;">${(user.total_score || 0).toLocaleString()}</td>
+                    <td>#${rank}</td>
+                    <td><span class="status-badge ${status}">${status}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            ${status === 'active' ? `
+                                <button class="btn-action btn-deactivate" onclick="deactivateUser(${user.id})" title="Deactivate">
+                                    <i class="fas fa-pause"></i>
+                                </button>
+                                <button class="btn-action btn-ban" onclick="banUser(${user.id})" title="Ban">
+                                    <i class="fas fa-ban"></i>
+                                </button>
+                            ` : `
+                                <button class="btn-action btn-activate" onclick="activateUser(${user.id})" title="Activate">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                            `}
+                            <button class="btn-action btn-view" onclick="viewUser(${user.id})" title="View Details">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        /**
+         * Update users badge count
+         */
+        function updateUsersBadge(count) {
+            const badge = document.getElementById('usersBadge');
+            if (badge) badge.textContent = count;
+        }
+
+        /**
+         * Update pagination info
+         */
+        function updatePaginationInfo(tableName, total) {
+            const info = document.getElementById(tableName + 'PaginationInfo');
+            if (info) {
+                const label = tableName === 'matches' ? 'matches' : 'users';
+                info.textContent = `Showing 1-${Math.min(10, total)} of ${total} ${label}`;
+            }
+        }
+
+        /**
+         * Load leaderboard data from API
+         */
+        async function loadLeaderboard() {
+            try {
+                const response = await adminApiRequest('/leaderboard?limit=10');
+
+                if (response.success && response.data) {
+                    renderLeaderboardTable(response.data.leaderboard);
+
+                    // Update leaderboard stats
+                    if (response.data.leaderboard.length > 0) {
+                        const topPlayer = response.data.leaderboard[0];
+                        document.getElementById('topScore').textContent = (topPlayer.total_score || 0).toLocaleString();
+                        document.getElementById('currentLeader').textContent = topPlayer.username || '#-';
+                    }
+                    document.getElementById('activePlayersCount').textContent = response.data.leaderboard.length || 0;
+                }
+            } catch (error) {
+                console.error('Error loading leaderboard:', error);
+                renderLeaderboardTable([]);
+            }
+        }
+
+        /**
+         * Render leaderboard table
+         */
+        function renderLeaderboardTable(leaderboard) {
+            const tbody = document.getElementById('leaderboardTableBody');
+            tbody.innerHTML = '';
+
+            if (leaderboard.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4">No players yet</td></tr>';
+                return;
+            }
+
+            leaderboard.forEach((player) => {
+                const rankClass = player.rank === 1 ? 'gold' :
+                    player.rank === 2 ? 'silver' :
+                        player.rank === 3 ? 'bronze' : '';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><span class="rank-cell ${rankClass}">#${player.rank}</span></td>
+                    <td>
+                        <div class="player-cell">
+                            <div class="player-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <strong>${player.username}</strong>
+                        </div>
+                    </td>
+                    <td class="score-cell">${player.total_score.toLocaleString()}</td>
+                    <td>${player.matches_played ?? 0}</td>
+                    <td>${player.win_rate ? `${player.win_rate}%` : '-'}</td>
+                    <td><span class="status-badge active">active</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        /**
+         * Load matches from API
+         */
+        async function loadMatches() {
+            try {
+                const search = encodeURIComponent((document.getElementById('matchSearchInput')?.value || '').trim());
+                const status = encodeURIComponent(document.getElementById('matchStatusFilter')?.value || '');
+                const competitionId = encodeURIComponent(document.getElementById('matchCompetitionFilter')?.value || '');
+                const date = encodeURIComponent(document.getElementById('matchDateFilter')?.value || '');
+                const response = await adminApiRequest(`/admin/matches?search=${search}&status=${status}&competition_id=${competitionId}&date=${date}`);
+
+                if (response.success && response.data) {
+                    renderMatchesTable(response.data.matches);
+                    updateMatchesBadge(response.data.matches.length);
+                    updatePaginationInfo('matches', response.data.matches.length);
+                }
+            } catch (error) {
+                console.error('Error loading matches:', error);
+                renderMatchesTable([]);
+            }
+        }
+
+        /**
+         * Update matches badge
+         */
+        function updateMatchesBadge(count) {
+            const badge = document.getElementById('matchesBadge');
+            if (badge) badge.textContent = count;
+        }
+
+        /**
+         * Render matches table
+         */
+        function renderMatchesTable(matches) {
+            const tbody = document.getElementById('matchesTableBody');
+            tbody.innerHTML = '';
+
+            if (matches.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4">No matches found</td></tr>';
+                return;
+            }
+
+            // Show only first 10 matches
+            const displayMatches = matches.slice(0, 10);
+
+            displayMatches.forEach((match) => {
+                const screenshotHtml = match.image_filename
+                    ? `<img src="${API_ORIGIN}/api/uploads/${match.image_filename}" class="match-thumbnail" onclick="viewMatchDetails(${match.id})" alt="Screenshot">`
+                    : '<span style="color: var(--secondary-text);">No screenshot</span>';
+
+                const statusClass = match.is_verified ? 'active' : 'inactive';
+                const status = match.is_verified ? 'verified' : 'pending';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${match.username || `User #${match.user_id}`}</strong></td>
+                    <td>${new Date(match.date_uploaded).toLocaleDateString()}</td>
+                    <td>${screenshotHtml}</td>
+                    <td><span class="score-display">+${match.match_score}</span></td>
+                    <td><span class="status-badge ${statusClass}">${status}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-action btn-view" onclick="viewMatchDetails(${match.id})" title="View Details">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            ${!match.is_verified ? `
+                                <button class="btn-action btn-activate" onclick="verifyMatch(${match.id})" title="Verify">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="btn-action btn-ban" onclick="rejectMatch(${match.id})" title="Reject">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        /**
+         * Load notifications from API
+         */
+        async function loadNotifications() {
+            try {
+                const response = await adminApiRequest('/admin/notifications?limit=20');
+
+                if (response.success && response.data) {
+                    renderNotifications(response.data.notifications);
+
+                    // Update badge
+                    const unreadCount = response.data.unread_count || 0;
+                    const badge = document.getElementById('notificationBadge');
+                    if (badge) {
+                        badge.textContent = unreadCount;
+                        badge.style.display = unreadCount > 0 ? 'flex' : 'none';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading notifications:', error);
+            }
+        }
+
+        async function loadAIStatus() {
+            try {
+                const response = await adminApiRequest('/admin/ai-status');
+                if (!response.success || !response.data) return;
+
+                const stats = response.data;
+                const summary = document.getElementById('aiStatusSummary');
+                const list = document.getElementById('aiKeysList');
+                if (!summary || !list) return;
+
+                summary.textContent = `Total Keys: ${stats.total_keys || 0} | Active: ${stats.active_keys || 0} | Requests: ${stats.total_requests || 0}`;
+                list.innerHTML = '';
+
+                const keys = stats.keys || [];
+                if (!keys.length) {
+                    list.innerHTML = '<li class="notification-item"><div class="notification-content"><p>No AI keys configured yet.</p></div></li>';
+                    return;
+                }
+
+                keys.forEach((k) => {
+                    const li = document.createElement('li');
+                    li.className = 'notification-item';
+                    li.innerHTML = `
+                        <div class="notification-icon ${k.status === 'active' ? 'success' : 'warning'}">
+                            <i class="fas fa-key"></i>
+                        </div>
+                        <div class="notification-content">
+                            <h5>${k.prefix}</h5>
+                            <p>Usage: ${k.usage || 0} | Errors: ${k.errors || 0}</p>
+                            <span class="notification-time">Status: ${k.status}</span>
+                        </div>
+                    `;
+                    list.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Error loading AI status:', error);
+            }
+        }
+
+        /**
+         * Render notifications
+         */
+        function renderNotifications(notifications) {
+            const list = document.getElementById('systemNotificationsList');
+            list.innerHTML = '';
+
+            if (notifications.length === 0) {
+                list.innerHTML = '<li class="notification-item"><div class="notification-content"><p>No notifications</p></div></li>';
+                return;
+            }
+
+            notifications.forEach((notif) => {
+                const iconClass = notif.type || 'info';
+                const icon = iconClass === 'success' ? 'fa-check-circle' :
+                    iconClass === 'warning' ? 'fa-exclamation-triangle' :
+                        iconClass === 'danger' ? 'fa-exclamation-circle' : 'fa-bell';
+
+                const li = document.createElement('li');
+                li.className = 'notification-item' + (notif.is_read ? '' : ' unread');
+                li.innerHTML = `
+                    <div class="notification-icon ${iconClass}">
+                        <i class="fas ${icon}"></i>
+                    </div>
+                    <div class="notification-content">
+                        <h5>${notif.title || 'Notification'}</h5>
+                        <p>${notif.message}</p>
+                        <span class="notification-time">${notif.date ? new Date(notif.date).toLocaleDateString() : 'Just now'}</span>
+                        <button
+                            class="btn btn-sm btn-outline-danger"
+                            style="margin-top: 8px;"
+                            onclick="deleteAdminNotification(${notif.id})">
+                            Delete
+                        </button>
+                    </div>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        async function deleteAdminNotification(notificationId) {
+            try {
+                await adminApiRequest(`/admin/notifications/${notificationId}`, 'DELETE');
+                showAlert('Notification deleted', 'success');
+                loadNotifications();
+            } catch (error) {
+                console.error('Error deleting admin notification:', error);
+                showAlert('Failed to delete notification', 'error');
+            }
+        }
+
+        // ============================================
+        // EVENT LISTENERS
+        // ============================================
+
+        function setupEventListeners() {
+            // Mobile menu toggle
+            document.getElementById('menuToggle').addEventListener('click', function () {
+                document.getElementById('sidebar').classList.toggle('show');
+            });
+
+            // Recipient radio buttons
+            document.querySelectorAll('input[name="recipients"]').forEach(function (radio) {
+                radio.addEventListener('change', function () {
+                    const specificInput = document.getElementById('specificUserInput');
+                    specificInput.style.display = this.value === 'specific' ? 'block' : 'none';
+                });
+            });
+
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function (e) {
+                const sidebar = document.getElementById('sidebar');
+                const menuToggle = document.getElementById('menuToggle');
+                if (window.innerWidth <= 992 &&
+                    !sidebar.contains(e.target) &&
+                    !menuToggle.contains(e.target) &&
+                    sidebar.classList.contains('show')) {
+                    sidebar.classList.remove('show');
+                }
+            });
+
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', async function (e) {
+                e.preventDefault();
+                try {
+                    await adminApiRequest('/logout', 'POST');
+                } catch (error) {
+                    console.log('Logout error (ignoring)');
+                }
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('user');
+                window.location.href = 'landing.html';
+            });
+        }
+
+        // ============================================
+        // NAVIGATION
+        // ============================================
+
+        function switchSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.dashboard-section').forEach(function (section) {
+                section.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById('section-' + sectionName).classList.add('active');
+
+            // Update sidebar active state
+            document.querySelectorAll('.sidebar-nav .nav-item').forEach(function (item) {
+                item.classList.remove('active');
+            });
+            document.querySelector('.sidebar-nav .nav-item[data-section="' + sectionName + '"]').classList.add('active');
+
+            // Close mobile sidebar
+            if (window.innerWidth <= 992) {
+                document.getElementById('sidebar').classList.remove('show');
+            }
+
+            // Refresh data when switching sections
+            loadDashboardData();
+
+        }
+
+        // ============================================
+        // USER MANAGEMENT
+        // ============================================
+
+        function filterUsers() {
+            loadUsers();
+        }
+
+        function sortTable(tableName, columnIndex) {
+            showAlert('Sorting applied', 'info');
+        }
+
+        function filterLeaderboard() {
+            const term = (document.getElementById('leaderboardSearchInput')?.value || '').toLowerCase();
+            const rows = document.querySelectorAll('#leaderboardTableBody tr');
+            rows.forEach((row) => {
+                row.style.display = row.textContent.toLowerCase().includes(term) ? '' : 'none';
+            });
+        }
+
+        function sortLeaderboard() {
+            loadLeaderboard();
+        }
+
+        function sortLeaderboardTable(_columnIndex) {
+            loadLeaderboard();
+        }
+
+        async function deactivateUser(userId) {
+            try {
+                await adminApiRequest(`/admin/users/${userId}/deactivate`, 'POST');
+                showAlert('User deactivated successfully', 'success');
+                loadDashboardData();
+            } catch (error) {
+                showAlert('Error deactivating user', 'error');
+            }
+        }
+
+        async function banUser(userId) {
+            try {
+                await adminApiRequest(`/admin/users/${userId}/ban`, 'POST');
+                showAlert('User banned successfully', 'success');
+                loadDashboardData();
+            } catch (error) {
+                showAlert('Error banning user', 'error');
+            }
+        }
+
+        async function activateUser(userId) {
+            try {
+                await adminApiRequest(`/admin/users/${userId}/activate`, 'POST');
+                showAlert('User activated successfully', 'success');
+                loadDashboardData();
+            } catch (error) {
+                showAlert('Error activating user', 'error');
+            }
+        }
+
+        function viewUser(userId) {
+            showAlert('Viewing user #' + userId, 'info');
+        }
+
+        // ============================================
+        // MATCH MANAGEMENT
+        // ============================================
+
+        function filterMatches() {
+            loadMatches();
+        }
+
+        async function verifyMatch(matchId) {
+            try {
+                await adminApiRequest(`/admin/matches/${matchId}/verify`, 'POST');
+                showAlert('Match verified successfully', 'success');
+                loadDashboardData();
+            } catch (error) {
+                showAlert('Error verifying match', 'error');
+            }
+        }
+
+        async function rejectMatch(matchId) {
+            try {
+                await adminApiRequest(`/admin/matches/${matchId}/reject`, 'POST', { reason: 'Rejected by admin' });
+                showAlert('Match rejected', 'success');
+                loadDashboardData();
+            } catch (error) {
+                showAlert('Error rejecting match', 'error');
+            }
+        }
+
+        function viewMatchDetails(matchId) {
+            adminApiRequest(`/admin/matches/${matchId}`)
+                .then((response) => {
+                    if (!response.success || !response.data) return;
+                    const match = response.data.match;
+                    const stats = response.data.stats || {};
+
+                    const container = document.getElementById('matchStatsContent');
+                    container.innerHTML = `
+                        <div class="match-stat-item"><div class="match-stat-label">User</div><div class="match-stat-value">${match.username || `#${match.user_id}`}</div></div>
+                        <div class="match-stat-item"><div class="match-stat-label">Score</div><div class="match-stat-value">+${match.match_score || 0}</div></div>
+                        <div class="match-stat-item"><div class="match-stat-label">Goals</div><div class="match-stat-value">${stats.goals ?? match.goals ?? 0}</div></div>
+                        <div class="match-stat-item"><div class="match-stat-label">Assists</div><div class="match-stat-value">${stats.assists ?? match.assists ?? 0}</div></div>
+                        <div class="match-stat-item"><div class="match-stat-label">Shots on Target</div><div class="match-stat-value">${stats.shots_on_target ?? match.shots_on_target ?? 0}</div></div>
+                        <div class="match-stat-item"><div class="match-stat-label">Possession</div><div class="match-stat-value">${stats.possession ?? match.possession ?? 0}%</div></div>
+                        <div class="match-stat-item"><div class="match-stat-label">Pass Accuracy</div><div class="match-stat-value">${stats.pass_accuracy ?? match.pass_accuracy ?? 0}%</div></div>
+                        <div class="match-stat-item"><div class="match-stat-label">Tackles</div><div class="match-stat-value">${stats.tackles ?? match.tackles ?? 0}</div></div>
+                    `;
+
+                    const screenshot = document.getElementById('matchScreenshotPreview');
+                    if (match.image_filename) {
+                        screenshot.src = `${API_ORIGIN}/api/uploads/${match.image_filename}`;
+                        screenshot.style.display = 'inline-block';
+                    } else {
+                        screenshot.style.display = 'none';
+                    }
+
+                    document.getElementById('matchDetailsModal').classList.add('show');
+                })
+                .catch(() => showAlert('Error loading match details', 'error'));
+        }
+
+        function closeMatchModal() {
+            document.getElementById('matchDetailsModal').classList.remove('show');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('matchDetailsModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeMatchModal();
+            }
+        });
+
+        // ============================================
+        // COMPETITIONS
+        // ============================================
+
+        async function loadCompetitions() {
+            try {
+                const response = await adminApiRequest('/admin/competitions');
+                if (!response.success || !response.data) return;
+
+                const competitions = response.data.competitions || [];
+                const grid = document.getElementById('competitionGrid');
+                const select = document.getElementById('competitionSelect');
+
+                grid.innerHTML = '';
+                select.innerHTML = '';
+
+                if (competitions.length === 0) {
+                    grid.innerHTML = '<div class="data-card"><div style="padding:20px;">No competitions created yet.</div></div>';
+                    select.innerHTML = '<option value="">No competitions</option>';
+                    return;
+                }
+
+                competitions.forEach((comp) => {
+                    const card = document.createElement('div');
+                    card.className = 'data-card';
+                    card.innerHTML = `
+                        <div style="padding:20px;">
+                            <h4>${comp.name}</h4>
+                            <p style="color: var(--secondary-text);">${comp.description || 'No description'}</p>
+                            <p style="font-size: 13px;">Status: <span class="status-badge ${comp.status === 'active' ? 'active' : 'inactive'}">${comp.status}</span></p>
+                            <div class="action-buttons" style="margin-top: 12px;">
+                                <button class="btn-action btn-activate" onclick="startCompetition(${comp.id})" title="Start"><i class="fas fa-play"></i></button>
+                                <button class="btn-action btn-ban" onclick="endCompetition(${comp.id})" title="End"><i class="fas fa-stop"></i></button>
+                            </div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+
+                    const option = document.createElement('option');
+                    option.value = comp.id;
+                    option.textContent = comp.name;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading competitions:', error);
+            }
+        }
+
+        async function saveCompetitionSchedule() {
+            const competitionId = document.getElementById('competitionSelect').value;
+            const startDate = document.getElementById('competitionStartTime').value;
+            const endDate = document.getElementById('competitionEndTime').value;
+
+            if (!competitionId) {
+                showAlert('Select a competition first', 'warning');
+                return;
+            }
+
+            try {
+                await adminApiRequest(`/admin/competitions/${competitionId}`, 'PUT', {
+                    start_date: startDate || null,
+                    end_date: endDate || null
+                });
+                showAlert('Competition schedule saved', 'success');
+                loadCompetitions();
+                loadAdminStats();
+            } catch (error) {
+                showAlert('Failed to save schedule', 'error');
+            }
+        }
+
+        async function startCompetition(compId) {
+            try {
+                await adminApiRequest(`/admin/competitions/${compId}/start`, 'POST');
+                showAlert('Competition started', 'success');
+                loadCompetitions();
+                loadAdminStats();
+            } catch (error) {
+                showAlert('Failed to start competition', 'error');
+            }
+        }
+
+        async function endCompetition(compId) {
+            try {
+                await adminApiRequest(`/admin/competitions/${compId}/end`, 'POST');
+                showAlert('Competition ended', 'success');
+                loadCompetitions();
+                loadAdminStats();
+            } catch (error) {
+                showAlert('Failed to end competition', 'error');
+            }
+        }
+
+        // ============================================
+        // ANNOUNCEMENTS
+        // ============================================
+
+        async function sendAnnouncement(e) {
+            e.preventDefault();
+
+            const title = document.getElementById('announcementTitle').value;
+            const message = document.getElementById('announcementMessage').value;
+            const recipients = document.querySelector('input[name="recipients"]:checked').value;
+            const specificUsername = document.getElementById('specificUserInput').value;
+
+            if (!title || !message) {
+                showAlert('Please fill in all required fields', 'warning');
+                return;
+            }
+
+            try {
+                await adminApiRequest('/admin/announcements', 'POST', {
+                    title: title,
+                    message: message,
+                    recipients: recipients,
+                    specific_username: specificUsername
+                });
+                showAlert('Announcement sent successfully!', 'success');
+                document.getElementById('announcementForm').reset();
+                loadNotifications();
+            } catch (error) {
+                showAlert('Error sending announcement', 'error');
+            }
+        }
+
+        async function addAIKey(e) {
+            e.preventDefault();
+            const input = document.getElementById('newAiKeyInput');
+            const key = (input?.value || '').trim();
+
+            if (!key) {
+                showAlert('Enter an API key first', 'warning');
+                return;
+            }
+
+            try {
+                await adminApiRequest('/admin/ai-keys', 'POST', { key });
+                showAlert('AI key added successfully', 'success');
+                input.value = '';
+                loadAIStatus();
+            } catch (error) {
+                showAlert(error.message || 'Failed to add AI key', 'error');
+            }
+        }
+
+        async function reloadAIKeys() {
+            try {
+                await adminApiRequest('/admin/ai-keys/reload', 'POST');
+                showAlert('AI keys reloaded from .env', 'success');
+                loadAIStatus();
+            } catch (error) {
+                showAlert(error.message || 'Failed to reload AI keys', 'error');
+            }
+        }
+
+        // ============================================
+        // PAGINATION
+        // ============================================
+
+        function changePage(tableName, direction) {
+            showAlert('Page changed', 'info');
+        }
+
+        // ============================================
+        // ALERT TOAST
+        // ============================================
+
+        function showAlert(message, type) {
+            const toast = document.getElementById('alertToast');
+            const toastMessage = document.getElementById('alertToastMessage');
+            const toastIcon = toast.querySelector('.alert-toast-icon');
+
+            toast.className = 'alert-toast ' + type;
+
+            // Update icon based on type
+            const icons = {
+                'success': 'fa-check-circle',
+                'error': 'fa-times-circle',
+                'warning': 'fa-exclamation-triangle',
+                'info': 'fa-info-circle'
+            };
+            toastIcon.className = 'alert-toast-icon fas ' + icons[type];
+
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+
+            setTimeout(function () {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+
+</html>

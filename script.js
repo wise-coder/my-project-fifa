@@ -1,4 +1,4 @@
- /**
+/**
  * FIFA Stats Platform - Main JavaScript
  * ============================================
  * This file handles all frontend functionality for the dashboard.
@@ -9,7 +9,7 @@
 // CONFIGURATION
 // ============================================
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'http://127.0.0.1:5000/api';
 
 // ============================================
 // GLOBAL VARIABLES
@@ -594,7 +594,9 @@ function initializeUpload() {
             uploadBtn.innerHTML = '<i class="fas fa-upload me-2"></i>Upload Screenshot';
             
             if (data.success) {
-                showAlert(`Screenshot uploaded! Score: ${data.data.match_score} points`, 'success');
+                // Get the score - handle both possible response formats
+                const score = data.data?.match_score ?? data.match_score ?? 'N/A';
+                showAlert(`Screenshot uploaded! Score: ${score} points`, 'success');
                 
                 // Reset upload area
                 setTimeout(() => {
