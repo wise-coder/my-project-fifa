@@ -37,17 +37,28 @@ class APIKeyManager:
     
     def _load_keys(self) -> None:
         """Load API keys from environment variables."""
+        def _clean_key(value: str) -> str:
+            return (value or '').strip().strip('"').strip("'")
+
+        def _looks_like_gemini_key(value: str) -> bool:
+            # Gemini keys are usually like "AIzaSy..."
+            return value.startswith('AIza') and len(value) >= 20
+
         # Check for comma-separated keys first
-        comma_keys = os.getenv('GEMINI_API_KEYS', '')
+        comma_keys = _clean_key(os.getenv('GEMINI_API_KEYS', ''))
         if comma_keys:
-            keys = [k.strip() for k in comma_keys.split(',') if k.strip()]
+            keys = []
+            for raw in comma_keys.split(','):
+                key = _clean_key(raw)
+                if key and _looks_like_gemini_key(key):
+                    keys.append(key)
             self.keys.extend(keys)
             logger.info(f"Loaded {len(keys)} API keys from GEMINI_API_KEYS")
         
         # Check for individual keys
         for i in range(1, 5):
-            key = os.getenv(f'GEMINI_API_KEY_{i}')
-            if key and key not in self.keys:
+            key = _clean_key(os.getenv(f'GEMINI_API_KEY_{i}'))
+            if key and _looks_like_gemini_key(key) and key not in self.keys:
                 self.keys.append(key)
         
         # Initialize usage tracking

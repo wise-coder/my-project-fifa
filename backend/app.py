@@ -547,7 +547,13 @@ def upload_screenshot():
                 os.remove(filepath)
             except Exception:
                 pass
-            return json_response(False, message='AI validation unavailable. No points awarded.', status_code=503, data={'score': 0})
+            error_detail = ai_result.get('error_detail') or ai_result.get('analysis_notes') or ai_result.get('error') or 'Unknown AI error'
+            return json_response(
+                False,
+                message=f'AI validation unavailable. No points awarded. Reason: {error_detail}',
+                status_code=503,
+                data={'score': 0, 'ai_error': error_detail}
+            )
 
         if not ai_result.get('is_valid_screenshot', True):
             try:
@@ -993,6 +999,96 @@ def admin_ai_status():
     except Exception as e:
         logger.error(f"AI status error: {e}")
         return json_response(False, message='Failed to retrieve AI key status', status_code=500)
+
+
+@app.route('/api/admin/ai-test', methods=['POST'])
+@admin_required
+def admin_ai_test():
+    """
+    Test Gemini API key(s) without uploading a screenshot.
+
+    Optional JSON body:
+    {
+      "key": "AIza....",   # test only this key (optional)
+      "model": "gemini-1.5-flash"  # optional
+    }
+    """
+    try:
+        from services.api_key_manager import api_key_manager
+        from services.ai_analyzer import GENAI_AVAILABLE
+
+        if not GENAI_AVAILABLE:
+            return json_response(
+                False,
+                message='google-generativeai library is not available on the server',
+                status_code=503
+            )
+
+        try:
+            import google.generativeai as genai
+        except Exception as import_err:
+            return json_response(False, message=f'Gemini import failed: {import_err}', status_code=503)
+
+        payload = request.get_json(silent=True) or {}
+        requested_key = (payload.get('key') or '').strip()
+        model_name = (payload.get('model') or os.getenv('GEMINI_MODEL', 'gemini-1.5-flash')).strip()
+
+        keys_to_test = []
+        if requested_key:
+            keys_to_test = [requested_key]
+        else:
+            keys_to_test = list(api_key_manager.keys or [])
+
+        if not keys_to_test:
+            return json_response(False, message='No API keys configured', status_code=400)
+
+        results = []
+        for key in keys_to_test:
+            key_prefix = key[:10] + '...' if len(key) > 10 else key
+            try:
+                genai.configure(api_key=key)
+                model = genai.GenerativeModel(model_name)
+                response = model.generate_content("Reply with exactly: OK")
+                text = (getattr(response, 'text', '') or '').strip()
+                ok = 'OK' in text.upper()
+
+                api_key_manager.key_usage[key] = api_key_manager.key_usage.get(key, 0) + 1
+                if ok:
+                    api_key_manager.key_errors[key] = 0
+                else:
+                    api_key_manager.key_errors[key] = api_key_manager.key_errors.get(key, 0) + 1
+
+                results.append({
+                    'key_prefix': key_prefix,
+                    'status': 'ok' if ok else 'failed',
+                    'model': model_name,
+                    'response_preview': text[:80] if text else ''
+                })
+            except Exception as key_err:
+                api_key_manager.key_usage[key] = api_key_manager.key_usage.get(key, 0) + 1
+                api_key_manager.key_errors[key] = api_key_manager.key_errors.get(key, 0) + 1
+                results.append({
+                    'key_prefix': key_prefix,
+                    'status': 'failed',
+                    'model': model_name,
+                    'error': str(key_err)[:200]
+                })
+
+        passed = sum(1 for r in results if r.get('status') == 'ok')
+        failed = len(results) - passed
+        return json_response(
+            True,
+            data={
+                'total_tested': len(results),
+                'passed': passed,
+                'failed': failed,
+                'results': results
+            },
+            message='AI key test completed'
+        )
+    except Exception as e:
+        logger.error(f"AI test error: {e}")
+        return json_response(False, message='Failed to test AI keys', status_code=500)
 
 
 @app.route('/api/admin/ai-keys', methods=['POST'])

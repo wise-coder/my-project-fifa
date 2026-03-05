@@ -8,6 +8,7 @@ import os
 import logging
 from typing import Dict, Any
 import json
+from PIL import Image
 
 # Import API key manager
 from services.api_key_manager import api_key_manager
@@ -48,7 +49,8 @@ class AIAnalyzer:
         if api_key:
             try:
                 genai.configure(api_key=api_key)
-                self.model = genai.GenerativeModel('gemini-1.5-flash')
+                model_name = os.getenv('GEMINI_MODEL', 'gemini-1.5-flash')
+                self.model = genai.GenerativeModel(model_name)
                 logger.info("AI Analyzer configured successfully")
             except Exception as e:
                 logger.error(f"Failed to configure AI model: {e}")
@@ -114,8 +116,9 @@ If the image is not a valid FIFA match statistics screenshot, set is_valid_scree
                     api_key_manager.record_usage(api_key, success=False)
                     continue
 
-                myfile = genai.upload_file(image_path)
-                response = self.model.generate_content([myfile, prompt])
+                # Use direct image content to avoid upload-file API issues on some deployments.
+                with Image.open(image_path) as img:
+                    response = self.model.generate_content([prompt, img])
                 result = self._parse_ai_response(response.text)
                 api_key_manager.record_usage(api_key, success=True)
                 return result
@@ -127,6 +130,7 @@ If the image is not a valid FIFA match statistics screenshot, set is_valid_scree
 
         if last_error:
             logger.error(f"All API keys failed for AI analysis: {last_error}")
+            return self._fallback_analysis(error_message=str(last_error))
         return self._fallback_analysis()
     
     def _parse_ai_response(self, response_text: str) -> Dict[str, Any]:
@@ -199,7 +203,7 @@ If the image is not a valid FIFA match statistics screenshot, set is_valid_scree
             result['analysis_notes'] = 'Invalid stats range detected; rejected.'
         return result
     
-    def _fallback_analysis(self) -> Dict[str, Any]:
+    def _fallback_analysis(self, error_message: str = None) -> Dict[str, Any]:
         """
         Provide fallback analysis when AI is unavailable.
         
@@ -212,6 +216,7 @@ If the image is not a valid FIFA match statistics screenshot, set is_valid_scree
                 'is_valid_screenshot': False,
                 'analysis_notes': 'AI unavailable and fallback scoring is disabled',
                 'error': 'AI validation unavailable',
+                'error_detail': error_message or '',
                 'is_fallback': True
             }
 
