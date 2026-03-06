@@ -32,6 +32,7 @@ def normalize_database_url(database_url):
     """Normalize provider URLs for SQLAlchemy."""
     if not database_url:
         return database_url
+    database_url = database_url.strip()
     if database_url.startswith('postgres://'):
         database_url = database_url.replace('postgres://', 'postgresql://', 1)
     if database_url.startswith('postgresql://') and 'sslmode=' not in database_url:
