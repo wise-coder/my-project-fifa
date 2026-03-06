@@ -75,13 +75,13 @@ app = Flask(__name__)
 # Security configuration
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'fifa-stats-secret-key-2024')
 
-# Database configuration
-basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "fifa_stats.db")}'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# Database configuration - Use config.py settings (stores in AppData, not OneDrive)
+from config import DATABASE_PATH, SQLALCHEMY_TRACK_MODIFICATIONS
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DATABASE_PATH}'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = SQLALCHEMY_TRACK_MODIFICATIONS
 
-# Upload configuration
-UPLOAD_FOLDER = os.path.join(basedir, 'uploads')
+# Upload configuration - Use config.py settings
+from config import UPLOAD_FOLDER
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 MAX_CONTENT_LENGTH = int(os.environ.get('MAX_CONTENT_LENGTH', 5 * 1024 * 1024))  # 5MB default
 app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH

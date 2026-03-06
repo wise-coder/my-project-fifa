@@ -14,8 +14,14 @@ load_dotenv(env_path)
 
 # Base paths
 BASE_DIR = Path(__file__).parent
+
+# Store database in local AppData folder (NOT synced with OneDrive)
+import os
+LOCAL_DATA_DIR = Path(os.environ['LOCALAPPDATA']) / 'football_stats'
+LOCAL_DATA_DIR.mkdir(parents=True, exist_ok=True)
+
 UPLOAD_FOLDER = BASE_DIR / 'uploads'
-DATABASE_PATH = BASE_DIR / 'fifa_stats.db'
+DATABASE_PATH = LOCAL_DATA_DIR / 'fifa_stats.db'
 
 # Flask Configuration
 SECRET_KEY = os.getenv('SECRET_KEY', 'fifa-stats-secret-key-2024-change-in-production')
