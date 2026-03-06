@@ -6,6 +6,7 @@ Central configuration management using environment variables.
 
 import os
 from pathlib import Path
+
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -15,20 +16,41 @@ load_dotenv(env_path)
 # Base paths
 BASE_DIR = Path(__file__).parent
 
-# Store database in local AppData folder (NOT synced with OneDrive)
-import os
-LOCAL_DATA_DIR = Path(os.environ['LOCALAPPDATA']) / 'football_stats'
-LOCAL_DATA_DIR.mkdir(parents=True, exist_ok=True)
 
+def get_local_data_dir():
+    """Use LOCALAPPDATA on Windows and a local fallback elsewhere."""
+    local_appdata = os.getenv('LOCALAPPDATA')
+    if local_appdata:
+        data_dir = Path(local_appdata) / 'football_stats'
+    else:
+        data_dir = BASE_DIR / 'data'
+    data_dir.mkdir(parents=True, exist_ok=True)
+    return data_dir
+
+
+def normalize_database_url(database_url):
+    """Normalize provider URLs for SQLAlchemy."""
+    if not database_url:
+        return database_url
+    if database_url.startswith('postgres://'):
+        database_url = database_url.replace('postgres://', 'postgresql://', 1)
+    if database_url.startswith('postgresql://') and 'sslmode=' not in database_url:
+        separator = '&' if '?' in database_url else '?'
+        database_url = f'{database_url}{separator}sslmode=require'
+    return database_url
+
+
+LOCAL_DATA_DIR = get_local_data_dir()
 UPLOAD_FOLDER = BASE_DIR / 'uploads'
 DATABASE_PATH = LOCAL_DATA_DIR / 'fifa_stats.db'
+DEFAULT_SQLITE_URI = f'sqlite:///{DATABASE_PATH}'
 
 # Flask Configuration
 SECRET_KEY = os.getenv('SECRET_KEY', 'fifa-stats-secret-key-2024-change-in-production')
 DEBUG = os.getenv('FLASK_ENV', 'development') == 'development'
 
 # Database Configuration
-SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', f'sqlite:///{DATABASE_PATH}')
+SQLALCHEMY_DATABASE_URI = normalize_database_url(os.getenv('DATABASE_URL')) or DEFAULT_SQLITE_URI
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # File Upload Configuration

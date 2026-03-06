@@ -75,9 +75,9 @@ app = Flask(__name__)
 # Security configuration
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'fifa-stats-secret-key-2024')
 
-# Database configuration - Use config.py settings (stores in AppData, not OneDrive)
-from config import DATABASE_PATH, SQLALCHEMY_TRACK_MODIFICATIONS
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DATABASE_PATH}'
+# Database configuration - Prefer DATABASE_URL when provided
+from config import SQLALCHEMY_DATABASE_URI, SQLALCHEMY_TRACK_MODIFICATIONS
+app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = SQLALCHEMY_TRACK_MODIFICATIONS
 
 # Upload configuration - Use config.py settings
