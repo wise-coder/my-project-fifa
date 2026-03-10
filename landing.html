@@ -3,14 +3,15 @@
 
 <head>
     <link rel="icon" type="image/png" href="favicon.png">
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FIFA Stats - Track Your Game</title>
+    <meta name="description"
+        content="FIFA Stats - The ultimate Dream League Soccer tracking platform. Upload match screenshots, compete on leaderboards, and track your progress to become a champion.">
+    <title>FIFA Stats - Track Your Dream League Soccer Journey</title>
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1992368412422175"
-     crossorigin="anonymous"></script>
+
     <!-- Google Fonts -->
     <link
         href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap"
@@ -18,6 +19,10 @@
 
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1992368412422175"
+        crossorigin="anonymous"></script>
 
     <style>
         :root {
@@ -46,60 +51,89 @@
             overflow-x: hidden;
         }
 
-        /* Background Pattern */
         .bg-pattern {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background:
-                radial-gradient(circle at 20% 80%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
+            background: radial-gradient(circle at 20% 80%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
                 radial-gradient(circle at 80% 20%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
                 linear-gradient(135deg, #121212 0%, #1a1a2e 100%);
             z-index: -1;
         }
 
-        /* Grid overlay */
-        .bg-pattern::before {
-            content: '';
-            position: absolute;
+        .top-nav {
+            position: sticky;
             top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image:
-                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-            background-size: 50px 50px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(18, 18, 18, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 15px 0;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: var(--secondary-text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-color);
+        }
+
+        .nav-cta {
+            background: var(--accent-color);
+            color: var(--primary-bg) !important;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .nav-cta:hover {
+            background: var(--accent-hover);
         }
 
         .landing-container {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            animation: fadeIn 0.8s ease-out;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px 60px;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Logo Styles */
-        .logo-container {
-            margin-bottom: 30px;
+        .hero-section {
             text-align: center;
+            padding: 60px 20px;
+            margin-bottom: 50px;
         }
 
         .logo-icon {
@@ -110,7 +144,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 20px;
+            margin: 0 auto 25px;
             box-shadow: 0 10px 40px rgba(0, 255, 136, 0.3);
             animation: pulse 2s ease-in-out infinite;
         }
@@ -151,23 +185,17 @@
             color: var(--secondary-text);
             letter-spacing: 2px;
             text-transform: uppercase;
+            margin-bottom: 25px;
         }
 
-        /* Description */
         .description-box {
-            max-width: 600px;
-            text-align: center;
-            margin-bottom: 40px;
-            padding: 30px;
-            background: rgba(30, 30, 30, 0.6);
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            backdrop-filter: blur(10px);
+            max-width: 700px;
+            margin: 0 auto 40px;
         }
 
         .description-box p {
-            font-size: 1.1rem;
-            line-height: 1.8;
+            font-size: 1.15rem;
+            line-height: 1.9;
             color: var(--secondary-text);
         }
 
@@ -176,12 +204,12 @@
             font-weight: 500;
         }
 
-        /* Buttons */
         .btn-group-landing {
             display: flex;
             gap: 20px;
             flex-wrap: wrap;
             justify-content: center;
+            margin-bottom: 50px;
         }
 
         .btn-fifa {
@@ -193,8 +221,10 @@
             text-transform: uppercase;
             border-radius: 8px;
             transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .btn-fifa-primary {
@@ -223,21 +253,416 @@
             box-shadow: 0 10px 30px rgba(0, 255, 136, 0.4);
         }
 
-        /* Features Preview */
-        .features-row {
+        .content-section {
+            background: rgba(30, 30, 30, 0.75);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .section-title i {
+            margin-right: 12px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .feature-card {
+            background: var(--tertiary-bg);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-card i {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        .feature-card h3 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: var(--secondary-text);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .steps-container {
+            position: relative;
+            padding-left: 70px;
+        }
+
+        .steps-container::before {
+            content: '';
+            position: absolute;
+            left: 25px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--accent-color), rgba(0, 255, 136, 0.3));
+        }
+
+        .step-item {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .step-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-number {
+            position: absolute;
+            left: -45px;
+            top: 0;
+            width: 40px;
+            height: 40px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            color: var(--primary-bg);
+        }
+
+        .step-content h3 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--primary-text);
+            margin-bottom: 10px;
+        }
+
+        .step-content p {
+            color: var(--secondary-text);
+            line-height: 1.8;
+        }
+
+        .fair-play-box {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 170, 85, 0.05));
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .fair-play-box i {
+            font-size: 3rem;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        .fair-play-box h3 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 12px;
+        }
+
+        .fair-play-box p {
+            color: var(--secondary-text);
+            line-height: 1.8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .tip-card {
+            background: var(--tertiary-bg);
+            border-radius: 12px;
+            padding: 25px;
+            border-left: 3px solid var(--accent-color);
+            transition: transform 0.3s ease;
+        }
+
+        .tip-card:hover {
+            transform: translateX(5px);
+        }
+
+        .tip-card h4 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-text);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tip-card h4 i {
+            color: var(--accent-color);
+        }
+
+        .tip-card p {
+            color: var(--secondary-text);
+            font-size: 0.95rem;
+            line-height: 1.7;
+            margin-bottom: 0;
+        }
+
+        /* Competition Prizes Section */
+        .prizes-section {
+            background: linear-gradient(135deg, rgba(30, 30, 30, 0.95), rgba(45, 45, 45, 0.8));
+            border: 2px solid var(--accent-color);
+            border-radius: 20px;
+            padding: 50px 40px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .prizes-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .prizes-title i {
+            margin-right: 12px;
+            animation: trophy-bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes trophy-bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .prizes-subtitle {
+            text-align: center;
+            color: var(--secondary-text);
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+        }
+
+        .podium-container {
             display: flex;
             justify-content: center;
-            gap: 30px;
-            margin-top: 60px;
+            align-items: flex-end;
+            gap: 20px;
             flex-wrap: wrap;
         }
 
-        .quick-links {
-            margin-top: 34px;
+        .podium-place {
             display: flex;
-            gap: 18px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+
+        .podium-place:hover {
+            transform: translateY(-10px);
+        }
+
+        .winner-badge {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
             justify-content: center;
+            margin-bottom: 15px;
+            position: relative;
+            animation: badge-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes badge-glow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            }
+
+            50% {
+                box-shadow: 0 0 40px rgba(255, 215, 0, 0.8);
+            }
+        }
+
+        .winner-badge.first {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            width: 110px;
+            height: 110px;
+        }
+
+        .winner-badge.second {
+            background: linear-gradient(135deg, #C0C0C0, #A0A0A0);
+        }
+
+        .winner-badge.third {
+            background: linear-gradient(135deg, #CD7F32, #8B4513);
+        }
+
+        .winner-badge i {
+            font-size: 2.5rem;
+            color: var(--primary-bg);
+        }
+
+        .winner-badge.first i {
+            font-size: 3.2rem;
+        }
+
+        .crown-icon {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #FFD700;
+            font-size: 1.8rem;
+            animation: crown-float 1.5s ease-in-out infinite;
+        }
+
+        @keyframes crown-float {
+
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+
+            50% {
+                transform: translateX(-50%) translateY(-8px);
+            }
+        }
+
+        .podium-card {
+            background: var(--tertiary-bg);
+            border-radius: 15px;
+            padding: 25px 20px;
+            text-align: center;
+            min-width: 180px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .podium-place:first-child .podium-card {
+            border-color: #FFD700;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.08));
+        }
+
+        .podium-place:nth-child(2) .podium-card {
+            border-color: #C0C0C0;
+        }
+
+        .podium-place:nth-child(3) .podium-card {
+            border-color: #CD7F32;
+        }
+
+        .podium-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(0, 255, 136, 0.2);
+        }
+
+        .place-label {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-text);
+            margin-bottom: 5px;
+        }
+
+        .place-rank {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .first .place-rank {
+            color: #FFD700;
+        }
+
+        .second .place-rank {
+            color: #C0C0C0;
+        }
+
+        .third .place-rank {
+            color: #CD7F32;
+        }
+
+        .prize-amount {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 5px;
+        }
+
+        .first .prize-amount {
+            font-size: 2.5rem;
+        }
+
+        .prize-label {
+            color: var(--secondary-text);
+            font-size: 0.9rem;
+        }
+
+        .special-badge-text {
+            color: #FF6B6B;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .cta-prizes {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .cta-prizes p {
+            color: var(--secondary-text);
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+
+        .quick-links {
+            display: flex;
+            gap: 25px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
         }
 
         .quick-links a {
@@ -251,26 +676,62 @@
             color: var(--accent-color);
         }
 
-        .feature-item {
-            text-align: center;
-            padding: 20px;
+        .footer {
+            border-top: 1px solid var(--border-color);
+            background: var(--secondary-bg);
+            padding: 30px 20px;
+            margin-top: 40px;
         }
 
-        .feature-item i {
-            font-size: 2rem;
-            color: var(--accent-color);
-            margin-bottom: 10px;
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
-        .feature-item span {
-            display: block;
+        .footer-brand {
             font-family: 'Rajdhani', sans-serif;
-            font-size: 1rem;
-            color: var(--secondary-text);
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent-color);
         }
 
-        /* Responsive */
-        @media (max-width: 576px) {
+        .footer-links {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--secondary-text);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-color);
+        }
+
+        .footer-copyright {
+            color: var(--secondary-text);
+            font-size: 0.85rem;
+            text-align: center;
+            width: 100%;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
             .app-title {
                 font-size: 2.5rem;
             }
@@ -290,77 +751,316 @@
                 max-width: 280px;
             }
 
-            .description-box {
-                padding: 20px;
+            .steps-container {
+                padding-left: 0;
+            }
+
+            .steps-container::before {
+                display: none;
+            }
+
+            .step-number {
+                position: static;
+                margin-bottom: 15px;
+            }
+
+            .content-section {
+                padding: 25px;
+            }
+
+            .podium-container {
+                flex-direction: column;
+                align-items: center;
             }
         }
     </style>
 </head>
 
 <body>
-    <!-- Background Pattern -->
     <div class="bg-pattern"></div>
 
-    <!-- Main Container -->
-    <div class="landing-container">
-        <!-- Logo Section -->
-        <div class="logo-container">
-            <div class="logo-icon">
-                <i class="fas fa-trophy"></i>
+    <nav class="top-nav">
+        <div class="nav-container">
+            <a href="landing.html" class="nav-brand"><i class="fas fa-trophy"></i>FIFA STATS</a>
+            <div class="nav-links">
+                <a href="about.html">About</a>
+                <a href="how-it-works.html">How It Works</a>
+                <a href="blog.html">Tips & Guides</a>
+                <a href="contact.html">Contact</a>
+                <a href="privacy-policy.html">Privacy</a>
+                <a href="terms-of-service.html">Terms</a>
+                <a href="login.html" class="nav-cta">Login</a>
             </div>
+        </div>
+    </nav>
+
+    <div class="landing-container">
+        <section class="hero-section">
+            <div class="logo-icon"><i class="fas fa-trophy"></i></div>
             <h1 class="app-title">FIFA STATS</h1>
             <p class="app-subtitle">Track Your Glory</p>
-        </div>
+            <div class="description-box">
+                <p>Welcome to <span class="highlight">FIFA Stats</span>, the ultimate tracking platform for Dream League
+                    Soccer players. Upload your match screenshots, compete on the <span class="highlight">global
+                        leaderboard</span>, track your <span class="highlight">progress</span>, and prove you're the
+                    best. Your journey to becoming a pro starts here!</p>
+            </div>
+            <div class="btn-group-landing">
+                <a href="register.html" class="btn-fifa btn-fifa-primary"><i class="fas fa-user-plus"></i>Register</a>
+                <a href="login.html" class="btn-fifa btn-fifa-outline"><i class="fas fa-sign-in-alt"></i>Login</a>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card"><i class="fas fa-camera"></i>
+                    <h3>Upload Screenshots</h3>
+                    <p>Upload your Dream League Soccer match screenshots and get instant scoring</p>
+                </div>
+                <div class="feature-card"><i class="fas fa-list-ol"></i>
+                    <h3>Leaderboard</h3>
+                    <p>Compete with players worldwide and climb to the top of the rankings</p>
+                </div>
+                <div class="feature-card"><i class="fas fa-chart-line"></i>
+                    <h3>Track Progress</h3>
+                    <p>Monitor your improvement with detailed statistics and analytics</p>
+                </div>
+                <div class="feature-card"><i class="fas fa-bell"></i>
+                    <h3>Notifications</h3>
+                    <p>Stay updated with ranking changes and achievements</p>
+                </div>
+            </div>
+        </section>
 
-        <!-- Description -->
-        <div class="description-box">
-            <p>
-                Elevate your <span class="highlight">FIFA experience</span> with our advanced stats platform.
-                Upload your match screenshots, compete on the <span class="highlight">leaderboard</span>,
-                track your <span class="highlight">progress</span>, and stay updated with the latest notifications.
-                Your journey to becoming a pro starts here!
+        <section class="content-section">
+            <h2 class="section-title"><i class="fas fa-info-circle"></i>About Our Platform</h2>
+            <p
+                style="text-align: center; color: var(--secondary-text); line-height: 1.9; max-width: 800px; margin: 0 auto;">
+                FIFA Stats is a comprehensive football performance platform designed specifically for Dream League
+                Soccer players. Our mission is to help you track your match outcomes, measure your progress over time,
+                and compete fairly on our global leaderboard.</p>
+        </section>
+
+        <!-- Competition Prizes Section -->
+        <section class="prizes-section">
+            <h2 class="prizes-title"><i class="fas fa-trophy"></i>Competition Prizes</h2>
+            <p class="prizes-subtitle">Compete for amazing rewards! Top players receive exclusive prizes every season.
             </p>
-        </div>
 
-        <!-- Action Buttons -->
-        <div class="btn-group-landing">
-            <a href="register.html" class="btn btn-fifa btn-fifa-primary">
-                <i class="fas fa-user-plus me-2"></i>Register
-            </a>
-            <a href="login.html" class="btn btn-fifa btn-fifa-outline">
-                <i class="fas fa-sign-in-alt me-2"></i>Login
-            </a>
-        </div>
+            <div class="podium-container">
+                <!-- Second Place -->
+                <div class="podium-place second">
+                    <div class="winner-badge second">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <div class="podium-card">
+                        <div class="place-label">2nd Place</div>
+                        <div class="place-rank">🥈 Silver Medal</div>
+                        <div class="prize-amount">2,000 FRW</div>
+                        <div class="prize-label">Cash Prize</div>
+                    </div>
+                </div>
 
-        <!-- Features Preview -->
-        <div class="features-row">
-            <div class="feature-item">
-                <i class="fas fa-camera"></i>
-                <span>Upload Screenshots</span>
+                <!-- First Place -->
+                <div class="podium-place first">
+                    <div class="winner-badge first">
+                        <i class="fas fa-crown crown-icon"></i>
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <div class="podium-card">
+                        <div class="place-label">Champion</div>
+                        <div class="place-rank">🥇 Gold Medal</div>
+                        <div class="prize-amount">5,000 FRW</div>
+                        <div class="prize-label">Cash Prize + Trophy</div>
+                    </div>
+                </div>
+
+                <!-- Third Place -->
+                <div class="podium-place third">
+                    <div class="winner-badge third">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <div class="podium-card">
+                        <div class="place-label">3rd Place</div>
+                        <div class="place-rank">🥉 Bronze Medal</div>
+                        <div class="prize-amount special-badge-text">Special Badge</div>
+                        <div class="prize-label">Exclusive Profile Badge</div>
+                    </div>
+                </div>
             </div>
-            <div class="feature-item">
-                <i class="fas fa-list-ol"></i>
-                <span>Leaderboard</span>
+
+            <div class="cta-prizes">
+                <p>Ready to compete? Register now and start earning points to climb the leaderboard!</p>
+                <a href="register.html" class="btn-fifa btn-fifa-primary"><i class="fas fa-user-plus"></i>Join Now</a>
             </div>
-            <div class="feature-item">
-                <i class="fas fa-chart-line"></i>
-                <span>Track Progress</span>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title"><i class="fas fa-coins"></i>How to Earn Points</h2>
+            <div class="steps-container">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Upload Your Match Result</h3>
+                        <p>After playing a Dream League Soccer match, take a screenshot of your match statistics and
+                            upload it through your dashboard.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>AI Analyzes Your Performance</h3>
+                        <p>Our advanced AI system automatically analyzes your screenshot to extract match statistics and
+                            calculates your points.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Earn Points Based on Performance</h3>
+                        <p>Points are awarded for: Wins (30-50 pts), Goals (+5 per goal), Possession (+1-15), Shots on
+                            Target (+2 each), Clean Sheets (+20).</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Watch Your Ranking Grow</h3>
+                        <p>As you accumulate points, your position on the global leaderboard improves. Aim for
+                            consistency to reach the top!</p>
+                    </div>
+                </div>
             </div>
-            <div class="feature-item">
-                <i class="fas fa-bell"></i>
-                <span>Notifications</span>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title"><i class="fas fa-cloud-upload-alt"></i>How to Upload Screenshots</h2>
+            <div class="steps-container">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Create an Account</h3>
+                        <p>Register for a free account on FIFA Stats using your email address.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Navigate to Upload Section</h3>
+                        <p>After logging in, click on "Upload Match" in your dashboard sidebar.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Select Your Screenshot</h3>
+                        <p>Click on the upload area or drag and drop your screenshot. Supported: JPG, JPEG, PNG (Max
+                            5MB).</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Submit for Processing</h3>
+                        <p>Click the upload button and our system will analyze it within seconds!</p>
+                    </div>
+                </div>
             </div>
-        </div>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title"><i class="fas fa-trophy"></i>The Leaderboard System</h2>
+            <p style="text-align: center; color: var(--secondary-text); line-height: 1.9; margin-bottom: 25px;">Our
+                leaderboard showcases the top Dream League Soccer players from around the world.</p>
+            <div class="features-grid" style="margin-top: 30px;">
+                <div class="feature-card"><i class="fas fa-globe"></i>
+                    <h3>Global Rankings</h3>
+                    <p>Compete against players worldwide on our real-time leaderboard</p>
+                </div>
+                <div class="feature-card"><i class="fas fa-medal"></i>
+                    <h3>Top 3 Honors</h3>
+                    <p>The top 3 players are highlighted with gold, silver, and bronze medals</p>
+                </div>
+                <div class="feature-card"><i class="fas fa-history"></i>
+                    <h3>Your Position</h3>
+                    <p>Always see where you stand compared to other players</p>
+                </div>
+                <div class="feature-card"><i class="fas fa-chart-pie"></i>
+                    <h3>Detailed Stats</h3>
+                    <p>View total matches, wins, goals, and more for any player</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title"><i class="fas fa-handshake"></i>Fair Play Commitment</h2>
+            <div class="fair-play-box">
+                <i class="fas fa-shield-alt"></i>
+                <h3>Integrity First</h3>
+                <p>At FIFA Stats, we believe in fair competition. Our platform is built on trust and integrity. We use
+                    advanced validation systems to ensure only legitimate Dream League Soccer match results are
+                    processed. Any attempt to manipulate scores will result in immediate account suspension.</p>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title"><i class="fas fa-futbol"></i>Latest Tips & Guides</h2>
+            <p style="text-align: center; color: var(--secondary-text); line-height: 1.9; margin-bottom: 30px;">Level up
+                your Dream League Soccer game with expert strategies.</p>
+            <div class="tips-grid">
+                <div class="tip-card">
+                    <h4><i class="fas fa-chess-king"></i> Best DLS Strategies</h4>
+                    <p>Discover the most effective strategies to dominate in Dream League Soccer.</p>
+                </div>
+                <div class="tip-card">
+                    <h4><i class="fas fa-trophy"></i> 10 Tips to Win More</h4>
+                    <p>Proven tips to improve your win rate and make better decisions.</p>
+                </div>
+                <div class="tip-card">
+                    <h4><i class="fas fa-users"></i> Build Perfect Team</h4>
+                    <p>Learn about team chemistry and how to build a winning squad.</p>
+                </div>
+                <div class="tip-card">
+                    <h4><i class="fas fa-shield-alt"></i> Mastering Defense</h4>
+                    <p>Learn to organize your backline and prevent opponents from scoring.</p>
+                </div>
+                <div class="tip-card">
+                    <h4><i class="fas fa-bullseye"></i> Attacking Patterns</h4>
+                    <p>Take your attacking game to the next level with essential patterns.</p>
+                </div>
+                <div class="tip-card">
+                    <h4><i class="fas fa-brain"></i> Beginner's Guide</h4>
+                    <p>Everything new players need to know about Dream League Soccer.</p>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="blog.html" class="btn-fifa btn-fifa-outline"><i class="fas fa-book-open"></i>View All
+                    Guides</a>
+            </div>
+        </section>
 
         <div class="quick-links">
             <a href="about.html">About</a>
+            <a href="how-it-works.html">How It Works</a>
+            <a href="blog.html">Tips & Guides</a>
+            <a href="contact.html">Contact</a>
             <a href="privacy-policy.html">Privacy Policy</a>
             <a href="terms-of-service.html">Terms of Service</a>
-            <a href="contact.html">Contact</a>
         </div>
     </div>
 
-    <!-- Bootstrap JS Bundle -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand"><i class="fas fa-trophy me-2"></i>FIFA STATS</div>
+            <div class="footer-links">
+                <a href="about.html">About</a>
+                <a href="how-it-works.html">How It Works</a>
+                <a href="blog.html">Tips & Guides</a>
+                <a href="contact.html">Contact</a>
+                <a href="privacy-policy.html">Privacy Policy</a>
+                <a href="terms-of-service.html">Terms of Service</a>
+            </div>
+            <div class="footer-copyright">&copy; 2026 FIFA Stats. All rights reserved.</div>
+        </div>
+    </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Learn how FIFA Stats works - Upload match screenshots, earn points, climb the leaderboard, and track your Dream League Soccer progress.">
+    <title>How It Works - FIFA Stats</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1992368412422175"
+        crossorigin="anonymous"></script>
+
+    <style>
+        :root {
+            --primary-bg: #121212;
+            --secondary-bg: #1E1E1E;
+            --tertiary-bg: #2D2D2D;
+            --primary-text: #FFFFFF;
+            --secondary-text: #B0B0B0;
+            --accent-color: #00FF88;
+            --accent-hover: #00CC6A;
+            --border-color: #3D3D3D;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--primary-bg);
+            color: var(--primary-text);
+            min-height: 100vh;
+            line-height: 1.7;
+        }
+
+        /* Background Pattern */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 80%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
+                linear-gradient(135deg, #121212 0%, #1a1a2e 100%);
+            z-index: -1;
+        }
+
+        /* Navigation */
+        .top-nav {
+            position: sticky;
+            top: 0;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(18, 18, 18, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 15px 0;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-brand i {
+            font-size: 1.2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: var(--secondary-text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--accent-color);
+        }
+
+        .nav-cta {
+            background: var(--accent-color);
+            color: var(--primary-bg) !important;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .nav-cta:hover {
+            background: var(--accent-hover);
+        }
+
+        /* Main Content */
+        .content-wrap {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 0 20px 60px;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, rgba(30, 30, 30, 0.9), rgba(45, 45, 45, 0.7));
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 50px 40px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+        }
+
+        .hero h1 i {
+            margin-right: 12px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--secondary-text);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        /* Steps Container */
+        .steps-container {
+            position: relative;
+            padding-left: 80px;
+        }
+
+        .steps-container::before {
+            content: '';
+            position: absolute;
+            left: 30px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--accent-color), rgba(0, 255, 136, 0.3));
+            border-radius: 2px;
+        }
+
+        /* Step Card */
+        .step-card {
+            background: rgba(30, 30, 30, 0.75);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .step-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.1);
+        }
+
+        .step-number {
+            position: absolute;
+            left: -55px;
+            top: 25px;
+            width: 45px;
+            height: 45px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-bg);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+        }
+
+        .step-card h2 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .step-card p {
+            color: var(--secondary-text);
+            line-height: 1.9;
+            margin-bottom: 15px;
+        }
+
+        .step-card p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Feature List */
+        .step-features {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0;
+        }
+
+        .step-features li {
+            padding: 8px 0;
+            color: var(--secondary-text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-features li i {
+            color: var(--accent-color);
+            font-size: 0.9rem;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 170, 85, 0.05));
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-box h3 {
+            font-family: 'Rajdhani', sans-serif;
+            color: var(--accent-color);
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-box p {
+            color: var(--secondary-text);
+            margin-bottom: 0;
+        }
+
+        /* Scoring Table */
+        .scoring-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: var(--tertiary-bg);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .scoring-table th,
+        .scoring-table td {
+            padding: 14px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .scoring-table th {
+            background: var(--secondary-bg);
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            color: var(--accent-color);
+            font-size: 1rem;
+        }
+
+        .scoring-table td {
+            color: var(--secondary-text);
+        }
+
+        .scoring-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .scoring-table .points {
+            color: var(--accent-color);
+            font-weight: 600;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        /* Tips Section */
+        .tips-section {
+            background: rgba(30, 30, 30, 0.75);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 35px;
+            margin-bottom: 30px;
+        }
+
+        .tips-section h2 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .tip-card {
+            background: var(--tertiary-bg);
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 3px solid var(--accent-color);
+        }
+
+        .tip-card h3 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-text);
+            margin-bottom: 8px;
+        }
+
+        .tip-card p {
+            color: var(--secondary-text);
+            font-size: 0.95rem;
+            margin-bottom: 0;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 170, 85, 0.1));
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .cta-section h2 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        .cta-section p {
+            color: var(--secondary-text);
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-cta {
+            padding: 14px 35px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cta-primary {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+        }
+
+        .btn-cta-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 255, 136, 0.3);
+        }
+
+        .btn-cta-outline {
+            background: transparent;
+            color: var(--accent-color);
+            border: 2px solid var(--accent-color);
+        }
+
+        .btn-cta-outline:hover {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid var(--border-color);
+            background: var(--secondary-bg);
+            padding: 30px 20px;
+            margin-top: 40px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-brand {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--secondary-text);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-color);
+        }
+
+        .footer-copyright {
+            color: var(--secondary-text);
+            font-size: 0.85rem;
+            text-align: center;
+            width: 100%;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .steps-container {
+                padding-left: 0;
+            }
+
+            .steps-container::before {
+                display: none;
+            }
+
+            .step-number {
+                position: static;
+                margin-bottom: 15px;
+            }
+
+            .step-card {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Background Pattern -->
+    <div class="bg-pattern"></div>
+
+    <!-- Navigation -->
+    <nav class="top-nav">
+        <div class="nav-container">
+            <a href="landing.html" class="nav-brand">
+                <i class="fas fa-trophy"></i>
+                FIFA STATS
+            </a>
+            <div class="nav-links">
+                <a href="about.html">About</a>
+                <a href="how-it-works.html" class="active">How It Works</a>
+                <a href="blog.html">Tips & Guides</a>
+                <a href="contact.html">Contact</a>
+                <a href="privacy-policy.html">Privacy</a>
+                <a href="terms-of-service.html">Terms</a>
+                <a href="login.html" class="nav-cta">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="content-wrap">
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1><i class="fas fa-question-circle"></i>How It Works</h1>
+            <p>
+                Get started with FIFA Stats in minutes! Learn how to upload your match screenshots,
+                earn points, and climb the leaderboard to become the ultimate Dream League Soccer champion.
+            </p>
+        </section>
+
+        <!-- How It Works Steps -->
+        <div class="steps-container">
+
+            <!-- Step 1: Create Account -->
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <h2><i class="fas fa-user-plus"></i>Create Your Free Account</h2>
+                <p>
+                    The first step to tracking your Dream League Soccer progress is creating a free account on FIFA
+                    Stats.
+                    Visit our registration page and provide a valid email address and choose a unique username.
+                </p>
+                <p>
+                    Your account serves as your personal dashboard where you can:
+                </p>
+                <ul class="step-features">
+                    <li><i class="fas fa-check"></i> Upload match screenshots</li>
+                    <li><i class="fas fa-check"></i> View your statistics and progress</li>
+                    <li><i class="fas fa-check"></i> Check your leaderboard ranking</li>
+                    <li><i class="fas fa-check"></i> Receive notifications about your achievements</li>
+                </ul>
+                <div class="info-box">
+                    <h3><i class="fas fa-info-circle"></i>Quick Tip</h3>
+                    <p>Choose a memorable username as it will be displayed on the public leaderboard for all to see!</p>
+                </div>
+            </div>
+
+            <!-- Step 2: Upload Screenshot -->
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <h2><i class="fas fa-camera"></i>Upload Match Screenshot</h2>
+                <p>
+                    After logging into your dashboard, navigate to the Upload Match section. Here you can upload
+                    a screenshot of your Dream League Soccer match statistics. Make sure the image clearly shows:
+                </p>
+                <ul class="step-features">
+                    <li><i class="fas fa-check"></i> Final score (goals for both teams)</li>
+                    <li><i class="fas fa-check"></i> Possession percentage</li>
+                    <li><i class="fas fa-check"></i> Shots on target</li>
+                    <li><i class="fas fa-check"></i> Match date and competition type</li>
+                </ul>
+                <p>
+                    Supported formats include JPG, JPEG, and PNG. The maximum file size is 5MB per upload.
+                </p>
+                <div class="info-box">
+                    <h3><i class="fas fa-lightbulb"></i>Best Practices</h3>
+                    <p>Use high-quality screenshots where all statistics are clearly visible. Avoid blurry or
+                        dark images that may affect our system's ability to read the data accurately.</p>
+                </div>
+            </div>
+
+            <!-- Step 3: AI Analysis -->
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <h2><i class="fas fa-brain"></i>Automatic Analysis & Scoring</h2>
+                <p>
+                    Once you upload your screenshot, our advanced AI system analyzes the image to extract
+                    match statistics. The system calculates your points based on various performance metrics:
+                </p>
+
+                <table class="scoring-table">
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Points Range</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Match Outcome</td>
+                            <td class="points">+30 to +50</td>
+                            <td>Win, Draw, or Loss</td>
+                        </tr>
+                        <tr>
+                            <td>Goals Scored</td>
+                            <td class="points">+5 per goal</td>
+                            <td>Goals you scored</td>
+                        </tr>
+                        <tr>
+                            <td>Possession</td>
+                            <td class="points">+1 to +15</td>
+                            <td>Based on possession %</td>
+                        </tr>
+                        <tr>
+                            <td>Shots on Target</td>
+                            <td class="points">+2 per shot</td>
+                            <td>Accuracy bonus</td>
+                        </tr>
+                        <tr>
+                            <td>Clean Sheet</td>
+                            <td class="points">+20</td>
+                            <td>No goals conceded</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p style="margin-top: 15px;">
+                    The system validates your screenshot to ensure it's a legitimate Dream League Soccer
+                    match result, maintaining fair play for all users.
+                </p>
+            </div>
+
+            <!-- Step 4: Points & Ranking -->
+            <div class="step-card">
+                <div class="step-number">4</div>
+                <h2><i class="fas fa-trophy"></i>Earn Points & Build Your Ranking</h2>
+                <p>
+                    Every match you upload contributes to your total score. Your points accumulate over time,
+                    and your ranking on the global leaderboard is determined by your total score.
+                </p>
+                <p>
+                    The leaderboard is updated in real-time, so you can see how you stack up against
+                    other Dream League Soccer players worldwide. Aim for the top!
+                </p>
+                <ul class="step-features">
+                    <li><i class="fas fa-check"></i> Track your progress over time</li>
+                    <li><i class="fas fa-check"></i> Compete for top positions on the leaderboard</li>
+                    <li><i class="fas fa-check"></i> Earn achievements as you improve</li>
+                    <li><i class="fas fa-check"></i> Compare stats with friends</li>
+                </ul>
+            </div>
+
+            <!-- Step 5: Track Progress -->
+            <div class="step-card">
+                <div class="step-number">5</div>
+                <h2><i class="fas fa-chart-line"></i>Track Your Progress</h2>
+                <p>
+                    Your dashboard provides comprehensive analytics about your Dream League Soccer performance.
+                    Monitor your improvement with detailed statistics including:
+                </p>
+                <ul class="step-features">
+                    <li><i class="fas fa-check"></i> Total matches played and win rate</li>
+                    <li><i class="fas fa-check"></i> Goals scored and conceded</li>
+                    <li><i class="fas fa-check"></i> Average possession statistics</li>
+                    <li><i class="fas fa-check"></i> Performance trends over time</li>
+                    <li><i class="fas fa-check"></i> Recent match history</li>
+                </ul>
+                <p>
+                    Stay motivated by watching your stats improve and your ranking climb week by week!
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Tips Section -->
+        <section class="tips-section">
+            <h2><i class="fas fa-star"></i>Tips for Maximizing Your Score</h2>
+            <div class="tips-grid">
+                <div class="tip-card">
+                    <h3><i class="fas fa-bullseye"></i> Win Every Match</h3>
+                    <p>Victories earn the most points. Focus on consistent wins rather than high-scoring draws.</p>
+                </div>
+                <div class="tip-card">
+                    <h3><i class="fas fa-shield-alt"></i> Keep Clean Sheets</h3>
+                    <p>Defensive excellence pays off! Conceding zero goals gives you a +20 point bonus.</p>
+                </div>
+                <div class="tip-card">
+                    <h3><i class="fas fa-futbol"></i> Score Goals</h3>
+                    <p>Every goal adds +5 points. High-scoring wins can significantly boost your total.</p>
+                </div>
+                <div class="tip-card">
+                    <h3><i class="fas fa-percentage"></i> Dominate Possession</h3>
+                    <p>Higher possession percentages earn more points. Control the game to maximize scores.</p>
+                </div>
+                <div class="tip-card">
+                    <h3><i class="fas fa-camera"></i> Upload Consistently</h3>
+                    <p>Upload your match results regularly to build your score and track your improvement.</p>
+                </div>
+                <div class="tip-card">
+                    <h3><i class="fas fa-heart"></i> Play Fair</h3>
+                    <p>Only upload legitimate match results. Fair play ensures your achievements are meaningful!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <h2><i class="fas fa-rocket"></i>Ready to Start Your Journey?</h2>
+            <p>
+                Join thousands of Dream League Soccer players tracking their progress and competing
+                on the global leaderboard. It's free to join!
+            </p>
+            <div class="cta-buttons">
+                <a href="register.html" class="btn-cta btn-cta-primary">
+                    <i class="fas fa-user-plus"></i>Create Free Account
+                </a>
+                <a href="about.html" class="btn-cta btn-cta-outline">
+                    <i class="fas fa-info-circle"></i>Learn More
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <i class="fas fa-trophy me-2"></i>FIFA STATS
+            </div>
+            <div class="footer-links">
+                <a href="about.html">About</a>
+                <a href="how-it-works.html">How It Works</a>
+                <a href="blog.html">Tips & Guides</a>
+                <a href="contact.html">Contact</a>
+                <a href="privacy-policy.html">Privacy Policy</a>
+                <a href="terms-of-service.html">Terms of Service</a>
+            </div>
+            <div class="footer-copyright">
+                &copy; 2026 FIFA Stats. All rights reserved. Built for Dream League Soccer players worldwide.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

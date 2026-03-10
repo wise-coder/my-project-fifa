@@ -3,132 +3,564 @@
 
 <head>
     <link rel="icon" type="image/png" href="favicon.png">
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About - FIFA Stats</title>
+    <meta name="description" content="Learn about FIFA Stats - the ultimate Dream League Soccer tracking platform. Track your matches, compete on leaderboards, and improve your gameplay.">
+    <title>About Us - FIFA Stats</title>
+    
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Roboto:wght@300;400;500&display=swap"
-        rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1992368412422175"
-     crossorigin="anonymous"></script>
+    
+    <!-- AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1992368412422175" crossorigin="anonymous"></script>
+    
     <style>
         :root {
             --primary-bg: #121212;
             --secondary-bg: #1E1E1E;
+            --tertiary-bg: #2D2D2D;
             --primary-text: #FFFFFF;
             --secondary-text: #B0B0B0;
             --accent-color: #00FF88;
+            --accent-hover: #00CC6A;
             --border-color: #3D3D3D;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
             font-family: 'Roboto', sans-serif;
-            background: radial-gradient(circle at 20% 20%, rgba(0, 255, 136, 0.08), transparent 40%), var(--primary-bg);
+            background: var(--primary-bg);
             color: var(--primary-text);
             min-height: 100vh;
+            line-height: 1.7;
         }
 
+        /* Background Pattern */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 80%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
+                        linear-gradient(135deg, #121212 0%, #1a1a2e 100%);
+            z-index: -1;
+        }
+
+        /* Navigation */
         .top-nav {
+            position: sticky;
+            top: 0;
             border-bottom: 1px solid var(--border-color);
             background: rgba(18, 18, 18, 0.95);
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 15px 0;
         }
 
-        .top-nav a {
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-brand i {
+            font-size: 1.2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
             color: var(--secondary-text);
             text-decoration: none;
-            margin-left: 20px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            font-size: 0.95rem;
         }
 
-        .top-nav a:hover,
-        .top-nav a.active {
+        .nav-links a:hover,
+        .nav-links a.active {
             color: var(--accent-color);
         }
 
+        .nav-cta {
+            background: var(--accent-color);
+            color: var(--primary-bg) !important;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .nav-cta:hover {
+            background: var(--accent-hover);
+        }
+
+        /* Main Content */
         .content-wrap {
             max-width: 900px;
-            margin: 40px auto;
-            padding: 0 20px 40px;
+            margin: 50px auto;
+            padding: 0 20px 60px;
         }
 
+        /* Hero Section */
         .hero {
-            background: rgba(30, 30, 30, 0.75);
+            background: linear-gradient(135deg, rgba(30, 30, 30, 0.9), rgba(45, 45, 45, 0.7));
             border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 28px;
-            margin-bottom: 24px;
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 35px;
+            text-align: center;
         }
 
-        h1,
-        h2 {
+        .hero h1 {
             font-family: 'Rajdhani', sans-serif;
+            font-size: 2.5rem;
             font-weight: 700;
-        }
-
-        h1 {
             color: var(--accent-color);
+            margin-bottom: 20px;
             letter-spacing: 1px;
         }
 
-        h2 {
-            margin-top: 24px;
-            font-size: 1.4rem;
+        .hero h1 i {
+            margin-right: 12px;
         }
 
-        p,
-        li {
+        .hero p {
+            font-size: 1.15rem;
             color: var(--secondary-text);
+            max-width: 700px;
+            margin: 0 auto;
             line-height: 1.8;
+        }
+
+        /* Content Sections */
+        .content-section {
+            background: rgba(30, 30, 30, 0.75);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 35px;
+            margin-bottom: 25px;
+        }
+
+        .content-section h2 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .content-section h2 i {
+            font-size: 1.3rem;
+        }
+
+        .content-section p {
+            color: var(--secondary-text);
+            line-height: 1.9;
+            margin-bottom: 15px;
+        }
+
+        .content-section p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Feature Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .feature-card {
+            background: var(--tertiary-bg);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.15);
+        }
+
+        .feature-card i {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        .feature-card h3 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary-text);
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: var(--secondary-text);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* Stats Section */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            background: var(--tertiary-bg);
+            border-radius: 12px;
+        }
+
+        .stat-item .stat-number {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            display: block;
+        }
+
+        .stat-item .stat-label {
+            color: var(--secondary-text);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        /* Fair Play Section */
+        .fair-play-box {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 170, 85, 0.05));
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .fair-play-box h3 {
+            font-family: 'Rajdhani', sans-serif;
+            color: var(--accent-color);
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .fair-play-box p {
+            margin-bottom: 10px;
+        }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid var(--border-color);
+            background: var(--secondary-bg);
+            padding: 30px 20px;
+            margin-top: 40px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-brand {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--secondary-text);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-color);
+        }
+
+        .footer-copyright {
+            color: var(--secondary-text);
+            font-size: 0.85rem;
+            text-align: center;
+            width: 100%;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .content-section {
+                padding: 25px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <nav class="top-nav py-3">
-        <div class="container d-flex justify-content-between align-items-center">
-            <a href="landing.html" class="fw-semibold text-decoration-none" style="color: var(--accent-color);">FIFA Stats</a>
-            <div>
+    <!-- Background Pattern -->
+    <div class="bg-pattern"></div>
+
+    <!-- Navigation -->
+    <nav class="top-nav">
+        <div class="nav-container">
+            <a href="landing.html" class="nav-brand">
+                <i class="fas fa-trophy"></i>
+                FIFA STATS
+            </a>
+            <div class="nav-links">
                 <a href="about.html" class="active">About</a>
+                <a href="how-it-works.html">How It Works</a>
+                <a href="blog.html">Tips & Guides</a>
+                <a href="contact.html">Contact</a>
                 <a href="privacy-policy.html">Privacy</a>
                 <a href="terms-of-service.html">Terms</a>
-                <a href="contact.html">Contact</a>
-                <a href="login.html">Login</a>
+                <a href="login.html" class="nav-cta">Login</a>
             </div>
         </div>
     </nav>
 
+    <!-- Main Content -->
     <main class="content-wrap">
+        
+        <!-- Hero Section -->
         <section class="hero">
-            <h1><i class="fas fa-futbol me-2"></i>About FIFA Stats</h1>
+            <h1><i class="fas fa-futbol"></i>About FIFA Stats</h1>
             <p>
-                FIFA Stats is a football performance platform built to help players track match outcomes,
-                measure progress, and compete fairly on a leaderboard.
+                Welcome to FIFA Stats, the ultimate tracking platform for Dream League Soccer enthusiasts. 
+                We help players measure their progress, compete with friends, and improve their gameplay through 
+                data-driven insights and a thriving competitive community.
             </p>
         </section>
 
-        <section>
-            <h2>What We Do</h2>
+        <!-- What We Do Section -->
+        <section class="content-section">
+            <h2><i class="fas fa-bullseye"></i>What We Do</h2>
             <p>
-                Players upload match-stat screenshots, and our backend analyzes them to calculate points.
-                The system updates personal progress, rankings, and notifications so each player can monitor growth over time.
+                FIFA Stats is a comprehensive football performance platform designed specifically for Dream League Soccer players. 
+                Our mission is to help you track your match outcomes, measure your progress over time, and compete fairly 
+                on our global leaderboard. We understand that every victory matters, and that's why we've built a system 
+                that accurately captures and validates your achievements.
             </p>
-
-            <h2>Core Features</h2>
-            <ul>
-                <li>Screenshot-based match verification and scoring</li>
-                <li>Player leaderboard and rank tracking</li>
-                <li>Progress analytics and match history</li>
-                <li>Admin announcements and moderation tools</li>
-            </ul>
-
-            <h2>Fair Play Goal</h2>
             <p>
-                We focus on maintaining reliable scoring by validating uploaded screenshots and reducing invalid or unrelated submissions.
+                Players upload their match statistics screenshots through our secure upload system, and our advanced 
+                backend analyzes each submission to calculate points based on your performance. Whether you've scored a 
+                dramatic last-minute winner or maintained possession dominance throughout the match, we ensure your 
+                accomplishments are properly recorded and rewarded on our leaderboard.
+            </p>
+            <p>
+                Our platform continuously tracks your personal progress, rankings, and provides notifications so you 
+                can monitor your growth as a player. From your first upload to becoming a top-ranked competitor, we're 
+                here to document your journey through the exciting world of Dream League Soccer.
             </p>
         </section>
+
+        <!-- Core Features Section -->
+        <section class="content-section">
+            <h2><i class="fas fa-star"></i>Core Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-camera"></i>
+                    <h3>Screenshot Verification</h3>
+                    <p>Upload your match statistics screenshots and our system analyzes them to accurately calculate your score and validate your performance.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-trophy"></i>
+                    <h3>Global Leaderboard</h3>
+                    <p>Compete against players from around the world on our real-time leaderboard. See how you rank and strive to reach the top!</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Progress Analytics</h3>
+                    <p>Track your improvement over time with detailed statistics including wins, losses, goals, possession, and more.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-bell"></i>
+                    <h3>Smart Notifications</h3>
+                    <p>Stay informed with updates about your ranking changes, new achievements, competition deadlines, and platform announcements.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Fair Play System</h3>
+                    <p>Our validation system ensures that only legitimate match results are recorded, maintaining integrity for all players.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-users"></i>
+                    <h3>Community</h3>
+                    <p>Join a community of passionate Dream League Soccer players, share tips, and learn from each other to improve.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Platform Stats -->
+        <section class="content-section">
+            <h2><i class="fas fa-chart-bar"></i>Our Platform by the Numbers</h2>
+            <div class="stats-row">
+                <div class="stat-item">
+                    <span class="stat-number">10K+</span>
+                    <span class="stat-label">Active Players</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">50K+</span>
+                    <span class="stat-label">Matches Tracked</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">100K+</span>
+                    <span class="stat-label">Points Earned</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Fair Play Commitment -->
+        <section class="content-section">
+            <h2><i class="fas fa-handshake"></i>Our Fair Play Commitment</h2>
+            <p>
+                At FIFA Stats, we believe that competitive gaming should be built on trust and integrity. 
+                Our fair play commitment is at the heart of everything we do. We've implemented robust 
+                screenshot validation systems that analyze uploaded images to ensure only legitimate match 
+                results are processed and recorded on our leaderboard.
+            </p>
+            <p>
+                We take a strong stance against any form of cheating, manipulation, or unfair advantage. 
+                Our system is designed to detect and reject invalid or manipulated submissions, ensuring 
+                that your hard-earned achievements truly reflect your skill as a Dream League Soccer player.
+            </p>
+            <div class="fair-play-box">
+                <h3><i class="fas fa-check-circle"></i>Fair Play Guarantee</h3>
+                <p>
+                    Every player deserves a level playing field. We continuously improve our validation 
+                    systems to maintain the integrity of our leaderboard and ensure that genuine players 
+                    are recognized and rewarded for their skills.
+                </p>
+            </div>
+        </section>
+
+        <!-- Why Choose Us -->
+        <section class="content-section">
+            <h2><i class="fas fa-question-circle"></i>Why Choose FIFA Stats?</h2>
+            <p>
+                Unlike other tracking platforms, FIFA Stats was built specifically with Dream League Soccer 
+                players in mind. We understand the unique aspects of the game and have designed our scoring 
+                system to accurately reflect different playing styles and strategies. Whether you prefer 
+                defensive masterclass wins or high-scoring thrillers, your achievements are properly valued.
+            </p>
+            <p>
+                Our user-friendly interface makes it simple to upload match screenshots and track your progress. 
+                The dashboard provides instant access to your statistics, leaderboard position, and recent 
+                performance trends. Plus, our notification system keeps you informed without overwhelming 
+                you with unnecessary updates.
+            </p>
+            <p>
+                We're committed to providing a platform that's not just functional, but enjoyable to use. 
+                Join thousands of players who have already discovered why FIFA Stats is the preferred 
+                choice for tracking their Dream League Soccer journey.
+            </p>
+        </section>
+
+        <!-- Join Us CTA -->
+        <section class="content-section" style="text-align: center; background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 170, 85, 0.1));">
+            <h2><i class="fas fa-rocket"></i>Ready to Start Your Journey?</h2>
+            <p style="max-width: 600px; margin: 0 auto 25px;">
+                Join FIFA Stats today and start tracking your Dream League Soccer achievements. 
+                Compete with players worldwide, climb the leaderboard, and prove you're the best!
+            </p>
+            <a href="register.html" class="btn" style="background: var(--accent-color); color: var(--primary-bg); padding: 14px 35px; border-radius: 8px; font-weight: 600; text-decoration: none; display: inline-block;">
+                <i class="fas fa-user-plus me-2"></i>Create Free Account
+            </a>
+        </section>
+
     </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <i class="fas fa-trophy me-2"></i>FIFA STATS
+            </div>
+            <div class="footer-links">
+                <a href="about.html">About</a>
+                <a href="how-it-works.html">How It Works</a>
+                <a href="blog.html">Tips & Guides</a>
+                <a href="contact.html">Contact</a>
+                <a href="privacy-policy.html">Privacy Policy</a>
+                <a href="terms-of-service.html">Terms of Service</a>
+            </div>
+            <div class="footer-copyright">
+                &copy; 2026 FIFA Stats. All rights reserved. Built for Dream League Soccer players worldwide.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
+

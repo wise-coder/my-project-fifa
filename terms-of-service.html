@@ -3,110 +3,654 @@
 
 <head>
     <link rel="icon" type="image/png" href="favicon.png">
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FIFA Stats Terms of Service - Read our terms and conditions for using our Dream League Soccer tracking platform.">
     <title>Terms of Service - FIFA Stats</title>
+    
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Roboto:wght@300;400;500&display=swap"
-        rel="stylesheet">
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1992368412422175"
-     crossorigin="anonymous"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1992368412422175" crossorigin="anonymous"></script>
+    
     <style>
         :root {
             --primary-bg: #121212;
             --secondary-bg: #1E1E1E;
+            --tertiary-bg: #2D2D2D;
             --primary-text: #FFFFFF;
             --secondary-text: #B0B0B0;
             --accent-color: #00FF88;
+            --accent-hover: #00CC6A;
             --border-color: #3D3D3D;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
             font-family: 'Roboto', sans-serif;
             background: var(--primary-bg);
             color: var(--primary-text);
+            min-height: 100vh;
+            line-height: 1.7;
         }
 
-        .container-wrap {
-            max-width: 900px;
-            margin: 32px auto;
-            padding: 0 20px 40px;
+        /* Background Pattern */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 80%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
+                        linear-gradient(135deg, #121212 0%, #1a1a2e 100%);
+            z-index: -1;
         }
 
-        .card-legal {
-            background: rgba(30, 30, 30, 0.8);
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 28px;
+        /* Navigation */
+        .top-nav {
+            position: sticky;
+            top: 0;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(18, 18, 18, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 15px 0;
         }
 
-        h1,
-        h2 {
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
             font-family: 'Rajdhani', sans-serif;
-        }
-
-        h1 {
-            color: var(--accent-color);
-            margin-bottom: 10px;
-        }
-
-        h2 {
-            margin-top: 24px;
-            font-size: 1.35rem;
-        }
-
-        p,
-        li {
-            color: var(--secondary-text);
-            line-height: 1.8;
-        }
-
-        a {
+            font-size: 1.5rem;
+            font-weight: 700;
             color: var(--accent-color);
             text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-brand i {
+            font-size: 1.2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: var(--secondary-text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--accent-color);
+        }
+
+        .nav-cta {
+            background: var(--accent-color);
+            color: var(--primary-bg) !important;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .nav-cta:hover {
+            background: var(--accent-hover);
+        }
+
+        /* Main Content */
+        .content-wrap {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 0 20px 60px;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, rgba(30, 30, 30, 0.9), rgba(45, 45, 45, 0.7));
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 35px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+        }
+
+        .hero h1 i {
+            margin-right: 12px;
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            color: var(--secondary-text);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Content Sections */
+        .content-section {
+            background: rgba(30, 30, 30, 0.75);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 35px;
+            margin-bottom: 25px;
+        }
+
+        .content-section h2 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .content-section h3 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary-text);
+            margin-top: 25px;
+            margin-bottom: 12px;
+        }
+
+        .content-section p {
+            color: var(--secondary-text);
+            line-height: 1.9;
+            margin-bottom: 15px;
+        }
+
+        .content-section p:last-child {
+            margin-bottom: 0;
+        }
+
+        .content-section ul {
+            color: var(--secondary-text);
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .content-section li {
+            margin-bottom: 8px;
+            line-height: 1.7;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: linear-gradient(135deg, rgba(255, 165, 2, 0.1), rgba(255, 71, 87, 0.05));
+            border: 1px solid rgba(255, 165, 2, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .warning-box h3 {
+            font-family: 'Rajdhani', sans-serif;
+            color: #FFA502;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            margin-top: 0;
+        }
+
+        .warning-box p {
+            margin-bottom: 0;
+        }
+
+        /* Important Box */
+        .important-box {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 170, 85, 0.05));
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .important-box h3 {
+            font-family: 'Rajdhani', sans-serif;
+            color: var(--accent-color);
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            margin-top: 0;
+        }
+
+        .important-box p {
+            margin-bottom: 0;
+        }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid var(--border-color);
+            background: var(--secondary-bg);
+            padding: 30px 20px;
+            margin-top: 40px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-brand {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--secondary-text);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-color);
+        }
+
+        .footer-copyright {
+            color: var(--secondary-text);
+            font-size: 0.85rem;
+            text-align: center;
+            width: 100%;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            
+            .content-section {
+                padding: 25px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container-wrap">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <a href="landing.html">Back to Home</a>
-            <a href="privacy-policy.html">Privacy Policy</a>
+    <!-- Background Pattern -->
+    <div class="bg-pattern"></div>
+
+    <!-- Navigation -->
+    <nav class="top-nav">
+        <div class="nav-container">
+            <a href="landing.html" class="nav-brand">
+                <i class="fas fa-trophy"></i>
+                FIFA STATS
+            </a>
+            <div class="nav-links">
+                <a href="about.html">About</a>
+                <a href="how-it-works.html">How It Works</a>
+                <a href="blog.html">Tips & Guides</a>
+                <a href="contact.html">Contact</a>
+                <a href="privacy-policy.html">Privacy</a>
+                <a href="terms-of-service.html" class="active">Terms</a>
+                <a href="login.html" class="nav-cta">Login</a>
+            </div>
         </div>
-        <div class="card-legal">
-            <h1>Terms of Service</h1>
-            <p>Last updated: March 5, 2026</p>
+    </nav>
 
-            <h2>Use of the Platform</h2>
+    <!-- Main Content -->
+    <main class="content-wrap">
+        
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1><i class="fas fa-gavel"></i>Terms of Service</h1>
             <p>
-                By using FIFA Stats, you agree to provide accurate account details and only upload valid football match-stat screenshots.
+                Please read these terms carefully before using FIFA Stats. By accessing 
+                and using our platform, you agree to be bound by these terms.
             </p>
+            <p style="margin-top: 15px; font-size: 0.95rem;">
+                <strong>Last Updated:</strong> March 5, 2026
+            </p>
+        </section>
 
-            <h2>Fair Use and Integrity</h2>
+        <!-- Acceptance of Terms -->
+        <section class="content-section">
+            <h2><i class="fas fa-hand-pointer"></i>Acceptance of Terms</h2>
+            <p>
+                By accessing and using FIFA Stats ("the Platform"), you accept and agree to be 
+                bound by the terms and provisions of this agreement. If you do not agree to 
+                these terms, you should not use our services.
+            </p>
+            <p>
+                These Terms of Service ("Terms") constitute a legally binding agreement between 
+                you ("User," "you," or "your") and FIFA Stats ("we," "our," or "us") governing 
+                your use of our website, services, and platform.
+            </p>
+        </section>
+
+        <!-- Use of the Platform -->
+        <section class="content-section">
+            <h2><i class="fas fa-laptop-code"></i>Use of the Platform</h2>
+            <p>
+                You agree to use the Platform only for lawful purposes and in accordance with 
+                these Terms. When using our services, you must:
+            </p>
             <ul>
-                <li>Do not submit unrelated, misleading, or manipulated images.</li>
-                <li>Do not attempt to exploit scoring or leaderboard systems.</li>
-                <li>Do not abuse notifications or user communication features.</li>
+                <li>Provide accurate and complete account information during registration</li>
+                <li>Maintain the security of your account credentials</li>
+                <li>Upload only valid Dream League Soccer match-stat screenshots</li>
+                <li>Use the platform in a manner that does not interfere with others' use</li>
+                <li>Comply with all applicable laws and regulations</li>
             </ul>
+            
+            <div class="warning-box">
+                <h3><i class="fas fa-exclamation-triangle"></i>Account Responsibilities</h3>
+                <p>
+                    You are solely responsible for maintaining the confidentiality of your 
+                    account and password. You agree to accept responsibility for all activities 
+                    that occur under your account.
+                </p>
+            </div>
+        </section>
 
-            <h2>Account Controls</h2>
+        <!-- Fair Use and Integrity -->
+        <section class="content-section">
+            <h2><i class="fas fa-fair-play"></i>Fair Use and Integrity</h2>
             <p>
-                Admins may suspend, deactivate, or ban accounts that violate these terms or threaten platform integrity.
+                We are committed to maintaining a fair and competitive environment for all 
+                players. To ensure the integrity of our platform, you must NOT:
             </p>
+            <ul>
+                <li>Submit unrelated, misleading, or manipulated images as match statistics</li>
+                <li>Attempt to exploit or manipulate our scoring or leaderboard systems</li>
+                <li>Create multiple accounts to gain unfair advantages</li>
+                <li>Share account credentials with others</li>
+                <li>Use automated tools or bots to interact with our services</li>
+                <li>Abuse notifications or communication features</li>
+                <li>Harass, threaten, or intimidate other users</li>
+                <li>Post offensive, inappropriate, or illegal content</li>
+            </ul>
+            
+            <div class="warning-box">
+                <h3><i class="fas fa-ban"></i>Violations</h3>
+                <p>
+                    Users found violating these fair use policies may have their submissions 
+                    rejected, points deducted, accounts suspended, or permanently banned without 
+                    prior notice.
+                </p>
+            </div>
+        </section>
 
-            <h2>Service Availability</h2>
+        <!-- User Content -->
+        <section class="content-section">
+            <h2><i class="fas fa-image"></i>User Content</h2>
             <p>
-                We may change or update features at any time. Availability is not guaranteed without interruption.
+                When you upload screenshots and other content to our Platform, you retain 
+                ownership of your content but grant us a license to use it for platform purposes:
             </p>
+            <ul>
+                <li><strong>Storage:</strong> We store your uploaded screenshots to process and display your match statistics.</li>
+                <li><strong>Processing:</strong> We analyze your uploads to calculate scores and validate match results.</li>
+                <li><strong>Display:</strong> Your username and scores may be displayed on public leaderboards.</li>
+                <li><strong>Analytics:</strong> We may use anonymized data for platform improvement.</li>
+            </ul>
+            <p>
+                You represent and warrant that you have the legal right to upload and share 
+                all content you submit to our Platform.
+            </p>
+        </section>
 
-            <h2>Limitation of Liability</h2>
+        <!-- Intellectual Property -->
+        <section class="content-section">
+            <h2><i class="fas fa-copyright"></i>Intellectual Property</h2>
             <p>
-                The service is provided "as is" without warranties of uninterrupted operation, exact scoring outcomes, or fitness for any particular purpose.
+                The Platform and its original content, features, and functionality are and 
+                will remain the exclusive property of FIFA Stats and its licensors. The 
+                Platform is protected by copyright, trademark, and other laws.
             </p>
+            <p>
+                You may not reproduce, distribute, modify, create derivative works from, 
+                publicly display, publicly perform, republish, download, store, or transmit 
+                any material from our Platform without our prior written consent.
+            </p>
+        </section>
+
+        <!-- Account Controls -->
+        <section class="content-section">
+            <h2><i class="fas fa-user-cog"></i>Account Controls</h2>
+            <p>
+                We reserve the right to take the following actions to maintain platform integrity:
+            </p>
+            <ul>
+                <li><strong>Suspension:</strong> Temporarily disable accounts pending investigation</li>
+                <li><strong>Deactivation:</strong> Permanently remove accounts that violate terms</li>
+                <li><strong>Banning:</strong> Restrict access from users who abuse the platform</li>
+                <li><strong>Modification:</strong> Adjust scores or rankings found to be obtained unfairly</li>
+                <li><strong>Content Removal:</strong> Delete content that violates our policies</li>
+            </ul>
+            <p>
+                Our decisions regarding account actions are final and binding. If you believe 
+                an action was taken in error, you may contact our support team for review.
+            </p>
+        </section>
+
+        <!-- Service Availability -->
+        <section class="content-section">
+            <h2><i class="fas fa-server"></i>Service Availability</h2>
+            <p>
+                We strive to provide continuous and reliable service, but we cannot guarantee 
+                uninterrupted access to the Platform. You acknowledge that:
+            </p>
+            <ul>
+                <li>The Platform may be temporarily unavailable due to maintenance, updates, or technical issues</li>
+                <li>We may change, update, or discontinue features at any time without prior notice</li>
+                <li>Service availability is not guaranteed and may vary based on your location</li>
+                <li>We are not responsible for any data loss due to technical failures</li>
+            </ul>
+            <p>
+                We reserve the right to modify or terminate our services at any time for any 
+                reason without liability to you.
+            </p>
+        </section>
+
+        <!-- Third-Party Services -->
+        <section class="content-section">
+            <h2><i class="fas fa-external-link-alt"></i>Third-Party Services</h2>
+            <p>
+                Our Platform may contain links to third-party websites, services, or applications 
+                that are not owned or controlled by FIFA Stats. We have no control over and assume 
+                no responsibility for:
+            </p>
+            <ul>
+                <li>The content, privacy policies, or practices of any third-party sites</li>
+                <li>The accuracy or reliability of any information provided by third parties</li>
+                <li>The products or services offered by third-party providers</li>
+            </ul>
+            <p>
+                You acknowledge and agree that FIFA Stats shall not be responsible or liable 
+                for any damage or loss caused by your use of any third-party services.
+            </p>
+        </section>
+
+        <!-- Limitation of Liability -->
+        <section class="content-section">
+            <h2><i class="fas fa-exclamation-circle"></i>Limitation of Liability</h2>
+            <p>
+                TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE PLATFORM IS PROVIDED "AS IS" 
+                WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR IMPLIED, INCLUDING:
+            </p>
+            <ul>
+                <li>WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE</li>
+                <li>WARRANTIES OF UNINTERRUPTED OPERATION OR ERROR-FREE SERVICE</li>
+                <li>WARRANTIES REGARDING THE ACCURACY OR RELIABILITY OF RESULTS</li>
+                <li>WARRANTIES THAT DEFECTS WILL BE CORRECTED</li>
+            </ul>
+            <p>
+                IN NO EVENT SHALL FIFA STATS BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, 
+                CONSEQUENTIAL, OR PUNITIVE DAMAGES ARISING FROM YOUR USE OF THE PLATFORM.
+            </p>
+        </section>
+
+        <!-- Indemnification -->
+        <section class="content-section">
+            <h2><i class="fas fa-handshake"></i>Indemnification</h2>
+            <p>
+                You agree to defend, indemnify, and hold harmless FIFA Stats and its officers, 
+                directors, employees, and agents from and against any and all claims, damages, 
+                obligations, losses, liabilities, costs, or debt arising from:
+            </p>
+            <ul>
+                <li>Your use of and access to the Platform</li>
+                <li>Your violation of these Terms</li>
+                <li>Your violation of any third-party rights</li>
+                <li>Your submission of misleading or invalid content</li>
+            </ul>
+        </section>
+
+        <!-- Termination -->
+        <section class="content-section">
+            <h2><i class="fas fa-power-off"></i>Termination</h2>
+            <p>
+                These Terms will remain in effect until terminated by either party. You may 
+                terminate your account at any time by:
+            </p>
+            <ul>
+                <li>Contacting our support team</li>
+                <li>Using the account deletion feature in your settings</li>
+            </ul>
+            <p>
+                We may terminate or suspend your account immediately, without prior notice or 
+                liability, for any reason, including breach of these Terms.
+            </p>
+            <p>
+                Upon termination, your right to use the Platform will immediately cease. All 
+                provisions of these Terms which by their nature should survive termination 
+                shall survive.
+            </p>
+        </section>
+
+        <!-- Governing Law -->
+        <section class="content-section">
+            <h2><i class="fas fa-balance-scale"></i>Governing Law</h2>
+            <p>
+                These Terms shall be governed and construed in accordance with the laws of the 
+                jurisdiction in which FIFA Stats operates, without regard to its conflict of 
+                law provisions.
+            </p>
+            <p>
+                Our failure to enforce any right or provision of these Terms will not be 
+                considered a waiver of those rights.
+            </p>
+        </section>
+
+        <!-- Changes to Terms -->
+        <section class="content-section">
+            <h2><i class="fas fa-sync-alt"></i>Changes to Terms</h2>
+            <p>
+                We reserve the right to modify or replace these Terms at any time. We will 
+                provide notice of significant changes by posting the new Terms on this page 
+                and updating the "Last Updated" date.
+            </p>
+            <p>
+                Your continued use of the Platform after any such changes constitutes your 
+                acceptance of the new Terms. If you do not agree to the new terms, please 
+                stop using the Platform.
+            </p>
+        </section>
+
+        <!-- Contact Information -->
+        <section class="content-section">
+            <h2><i class="fas fa-envelope"></i>Contact Us</h2>
+            <p>
+                If you have any questions about these Terms, please contact us:
+            </p>
+            <ul>
+                <li><strong>Email:</strong> support@fifastats.com</li>
+                <li><strong>Admin:</strong> serge.wiseabijuru5@gmail.com</li>
+            </ul>
+            
+            <div class="important-box">
+                <h3><i class="fas fa-check-circle"></i>Acknowledgment</h3>
+                <p>
+                    By using FIFA Stats, you acknowledge that you have read, understood, 
+                    and agree to be bound by these Terms and our Privacy Policy.
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <i class="fas fa-trophy me-2"></i>FIFA STATS
+            </div>
+            <div class="footer-links">
+                <a href="about.html">About</a>
+                <a href="how-it-works.html">How It Works</a>
+                <a href="blog.html">Tips & Guides</a>
+                <a href="contact.html">Contact</a>
+                <a href="privacy-policy.html">Privacy Policy</a>
+                <a href="terms-of-service.html">Terms of Service</a>
+            </div>
+            <div class="footer-copyright">
+                &copy; 2026 FIFA Stats. All rights reserved. Built for Dream League Soccer players worldwide.
+            </div>
         </div>
-    </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
+

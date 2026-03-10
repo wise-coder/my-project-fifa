@@ -3,114 +3,622 @@
 
 <head>
     <link rel="icon" type="image/png" href="favicon.png">
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FIFA Stats Privacy Policy - Learn how we collect, use, and protect your personal data. Your privacy matters to us.">
     <title>Privacy Policy - FIFA Stats</title>
+    
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Roboto:wght@300;400;500&display=swap"
-        rel="stylesheet">
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1992368412422175"
-     crossorigin="anonymous"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1992368412422175" crossorigin="anonymous"></script>
+    
     <style>
         :root {
             --primary-bg: #121212;
             --secondary-bg: #1E1E1E;
+            --tertiary-bg: #2D2D2D;
             --primary-text: #FFFFFF;
             --secondary-text: #B0B0B0;
             --accent-color: #00FF88;
+            --accent-hover: #00CC6A;
             --border-color: #3D3D3D;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
             font-family: 'Roboto', sans-serif;
             background: var(--primary-bg);
             color: var(--primary-text);
+            min-height: 100vh;
+            line-height: 1.7;
         }
 
-        .container-wrap {
-            max-width: 900px;
-            margin: 32px auto;
-            padding: 0 20px 40px;
+        /* Background Pattern */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 80%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
+                        linear-gradient(135deg, #121212 0%, #1a1a2e 100%);
+            z-index: -1;
         }
 
-        .card-legal {
-            background: rgba(30, 30, 30, 0.8);
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 28px;
+        /* Navigation */
+        .top-nav {
+            position: sticky;
+            top: 0;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(18, 18, 18, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 15px 0;
         }
 
-        h1,
-        h2 {
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
             font-family: 'Rajdhani', sans-serif;
-        }
-
-        h1 {
-            color: var(--accent-color);
-            margin-bottom: 10px;
-        }
-
-        h2 {
-            margin-top: 24px;
-            font-size: 1.35rem;
-        }
-
-        p,
-        li {
-            color: var(--secondary-text);
-            line-height: 1.8;
-        }
-
-        a {
+            font-size: 1.5rem;
+            font-weight: 700;
             color: var(--accent-color);
             text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-brand i {
+            font-size: 1.2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: var(--secondary-text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--accent-color);
+        }
+
+        .nav-cta {
+            background: var(--accent-color);
+            color: var(--primary-bg) !important;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .nav-cta:hover {
+            background: var(--accent-hover);
+        }
+
+        /* Main Content */
+        .content-wrap {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 0 20px 60px;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, rgba(30, 30, 30, 0.9), rgba(45, 45, 45, 0.7));
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 35px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+        }
+
+        .hero h1 i {
+            margin-right: 12px;
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            color: var(--secondary-text);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Content Sections */
+        .content-section {
+            background: rgba(30, 30, 30, 0.75);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 35px;
+            margin-bottom: 25px;
+        }
+
+        .content-section h2 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .content-section h3 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary-text);
+            margin-top: 25px;
+            margin-bottom: 12px;
+        }
+
+        .content-section p {
+            color: var(--secondary-text);
+            line-height: 1.9;
+            margin-bottom: 15px;
+        }
+
+        .content-section p:last-child {
+            margin-bottom: 0;
+        }
+
+        .content-section ul {
+            color: var(--secondary-text);
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .content-section li {
+            margin-bottom: 8px;
+            line-height: 1.7;
+        }
+
+        /* Important Box */
+        .important-box {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 170, 85, 0.05));
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .important-box h3 {
+            font-family: 'Rajdhani', sans-serif;
+            color: var(--accent-color);
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            margin-top: 0;
+        }
+
+        .important-box p {
+            margin-bottom: 0;
+        }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid var(--border-color);
+            background: var(--secondary-bg);
+            padding: 30px 20px;
+            margin-top: 40px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-brand {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--secondary-text);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-color);
+        }
+
+        .footer-copyright {
+            color: var(--secondary-text);
+            font-size: 0.85rem;
+            text-align: center;
+            width: 100%;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            
+            .content-section {
+                padding: 25px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container-wrap">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <a href="landing.html">Back to Home</a>
-            <a href="contact.html">Contact</a>
+    <!-- Background Pattern -->
+    <div class="bg-pattern"></div>
+
+    <!-- Navigation -->
+    <nav class="top-nav">
+        <div class="nav-container">
+            <a href="landing.html" class="nav-brand">
+                <i class="fas fa-trophy"></i>
+                FIFA STATS
+            </a>
+            <div class="nav-links">
+                <a href="about.html">About</a>
+                <a href="how-it-works.html">How It Works</a>
+                <a href="blog.html">Tips & Guides</a>
+                <a href="contact.html">Contact</a>
+                <a href="privacy-policy.html" class="active">Privacy</a>
+                <a href="terms-of-service.html">Terms</a>
+                <a href="login.html" class="nav-cta">Login</a>
+            </div>
         </div>
-        <div class="card-legal">
-            <h1>Privacy Policy</h1>
-            <p>Last updated: March 5, 2026</p>
+    </nav>
 
-            <h2>Information We Collect</h2>
+    <!-- Main Content -->
+    <main class="content-wrap">
+        
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1><i class="fas fa-shield-alt"></i>Privacy Policy</h1>
+            <p>
+                Your privacy is important to us. This policy explains how we collect, use, 
+                and protect your personal information when you use FIFA Stats.
+            </p>
+            <p style="margin-top: 15px; font-size: 0.95rem;">
+                <strong>Last Updated:</strong> March 5, 2026
+            </p>
+        </section>
+
+        <!-- Introduction -->
+        <section class="content-section">
+            <h2><i class="fas fa-info-circle"></i>Introduction</h2>
+            <p>
+                FIFA Stats ("we," "our," or "us") is committed to protecting your privacy. This Privacy 
+                Policy explains how your personal information is collected, used, disclosed, and safeguarded 
+                when you use our website and services.
+            </p>
+            <p>
+                By using FIFA Stats, you agree to the collection and use of information in accordance 
+                with this policy. We encourage you to read this policy carefully to understand our 
+                practices regarding your data.
+            </p>
+        </section>
+
+        <!-- Information We Collect -->
+        <section class="content-section">
+            <h2><i class="fas fa-database"></i>Information We Collect</h2>
+            <p>
+                We collect various types of information to provide and improve our services to you:
+            </p>
+            
+            <h3>Personal Information</h3>
             <ul>
-                <li>Account information such as username and email address.</li>
-                <li>Uploaded screenshots used for match-stat analysis.</li>
-                <li>Activity data such as leaderboard position and notifications.</li>
+                <li><strong>Account Information:</strong> When you register an account, we collect your username, email address, and password.</li>
+                <li><strong>Profile Data:</strong> Additional information you provide in your profile, such as your avatar and preferences.</li>
+                <li><strong>Communication Data:</strong> Information you provide when contacting our support team.</li>
             </ul>
-
-            <h2>How We Use Data</h2>
+            
+            <h3>Usage Data</h3>
             <ul>
-                <li>To authenticate accounts and secure access.</li>
-                <li>To process match uploads and calculate scores.</li>
-                <li>To display progress, rankings, and admin notifications.</li>
+                <li><strong>Match Data:</strong> Screenshots and statistics you upload for match tracking and scoring.</li>
+                <li><strong>Activity Data:</strong> Information about your interactions with our platform, including leaderboard positions and notifications.</li>
+                <li><strong>Device Data:</strong> Basic information about your device, browser type, and operating system.</li>
             </ul>
-
-            <h2>Data Sharing</h2>
+            
+            <h3>Cookies and Tracking Technologies</h3>
             <p>
-                We do not sell personal data. Limited technical data may be processed by hosting or infrastructure providers
-                to run the service.
+                We use cookies and similar tracking technologies to enhance your experience on our platform. 
+                Cookies are small text files stored on your device that help us:
             </p>
-
-            <h2>Data Retention</h2>
+            <ul>
+                <li>Keep you logged in and remember your preferences</li>
+                <li>Analyze traffic and usage patterns</li>
+                <li>Understand how you interact with our services</li>
+                <li>Provide personalized content and advertisements</li>
+            </ul>
             <p>
-                Uploaded match records and notifications are retained to support leaderboard integrity and user history
-                unless deleted by an authorized admin process.
+                You can control cookies through your browser settings. However, disabling cookies may 
+                affect the functionality of some features on our platform.
             </p>
+        </section>
 
-            <h2>Security</h2>
+        <!-- How We Use Information -->
+        <section class="content-section">
+            <h2><i class="fas fa-cogs"></i>How We Use Your Information</h2>
             <p>
-                We implement reasonable safeguards, but no online platform can guarantee absolute security.
+                We use the collected information for various purposes:
             </p>
+            
+            <h3>Service Provision</h3>
+            <ul>
+                <li>To create and manage your account</li>
+                <li>To process and validate your match uploads</li>
+                <li>To calculate and track your scores and rankings</li>
+                <li>To provide customer support and respond to inquiries</li>
+            </ul>
+            
+            <h3>Platform Improvement</h3>
+            <ul>
+                <li>To analyze usage patterns and improve our services</li>
+                <li>To develop new features and functionality</li>
+                <li>To monitor and prevent technical issues</li>
+                <li>To gather feedback for product enhancements</li>
+            </ul>
+            
+            <h3>Communication</h3>
+            <ul>
+                <li>To send you important updates and notifications</li>
+                <li>To inform you about changes to our services</li>
+                <li>To respond to your requests and provide support</li>
+                <li>To send promotional content (with your consent)</li>
+            </ul>
+        </section>
+
+        <!-- Data Sharing -->
+        <section class="content-section">
+            <h2><i class="fas fa-share-alt"></i>Data Sharing and Disclosure</h2>
+            <p>
+                We do not sell your personal information. We may share your data only in the 
+                following circumstances:
+            </p>
+            
+            <h3>Service Providers</h3>
+            <p>
+                We work with third-party service providers who help us operate our platform, 
+                including hosting services, cloud storage, and analytics providers. These parties 
+                have access to your data only to perform tasks on our behalf.
+            </p>
+            
+            <h3>Legal Requirements</h3>
+            <p>
+                We may disclose your information when required by law or in response to valid 
+                requests by public authorities, such as to comply with a subpoena or similar 
+                legal process.
+            </p>
+            
+            <h3>Business Transfers</h3>
+            <p>
+                In the event of a merger, acquisition, or sale of all or a portion of our assets, 
+                your information may be transferred as part of that transaction.
+            </p>
+        </section>
+
+        <!-- Data Security -->
+        <section class="content-section">
+            <h2><i class="fas fa-lock"></i>Data Security</h2>
+            <p>
+                We implement appropriate technical and organizational measures to protect your 
+                personal information against unauthorized access, alteration, disclosure, or 
+                destruction:
+            </p>
+            <ul>
+                <li><strong>Encryption:</strong> Sensitive data is encrypted using industry-standard protocols.</li>
+                <li><strong>Access Controls:</strong> Access to personal data is restricted to authorized personnel only.</li>
+                <li><strong>Regular Audits:</strong> We conduct regular security assessments to identify and address vulnerabilities.</li>
+                <li><strong>Secure Storage:</strong> Data is stored on secure servers with physical and electronic protections.</li>
+            </ul>
+            <p>
+                While we strive to protect your personal information, no method of transmission 
+                over the internet is 100% secure. We cannot guarantee absolute security.
+            </p>
+        </section>
+
+        <!-- Data Retention -->
+        <section class="content-section">
+            <h2><i class="fas fa-history"></i>Data Retention</h2>
+            <p>
+                We retain your personal information only for as long as necessary to fulfill 
+                the purposes outlined in this policy:
+            </p>
+            <ul>
+                <li><strong>Account Data:</strong> Retained while your account is active and for a period thereafter upon account deletion.</li>
+                <li><strong>Match Records:</strong> Retained to maintain leaderboard integrity and user history.</li>
+                <li><strong>Log Data:</strong> Retained for a limited period for security and troubleshooting purposes.</li>
+            </ul>
+            <p>
+                You may request deletion of your account and personal data at any time. However, 
+                some information may be retained as required by law or for legitimate business purposes.
+            </p>
+        </section>
+
+        <!-- Your Rights -->
+        <section class="content-section">
+            <h2><i class="fas fa-user-shield"></i>Your Rights</h2>
+            <p>
+                You have certain rights regarding your personal information:
+            </p>
+            <ul>
+                <li><strong>Access:</strong> You can request a copy of the personal data we hold about you.</li>
+                <li><strong>Correction:</strong> You can request correction of inaccurate personal data.</li>
+                <li><strong>Deletion:</strong> You can request deletion of your personal data (right to be forgotten).</li>
+                <li><strong>Data Portability:</strong> You can request your data in a machine-readable format.</li>
+                <li><strong>Opt-Out:</strong> You can opt out of receiving promotional communications.</li>
+            </ul>
+            <p>
+                To exercise these rights, please contact us using the information provided in 
+                our Contact page.
+            </p>
+        </section>
+
+        <!-- GDPR Compliance -->
+        <section class="content-section">
+            <h2><i class="fas fa-globe"></i>GDPR Compliance</h2>
+            <p>
+                For users in the European Economic Area (EEA), we comply with the General Data 
+                Protection Regulation (GDPR). Under the GDPR, you have additional rights including:
+            </p>
+            <ul>
+                <li>The right to be informed about how we use your data</li>
+                <li>The right to access your personal data</li>
+                <li>The right to rectify inaccurate data</li>
+                <li>The right to erasure ("right to be forgotten")</li>
+                <li>The right to restrict processing</li>
+                <li>The right to data portability</li>
+                <li>The right to object to processing</li>
+                <li>Rights related to automated decision-making</li>
+            </ul>
+            <p>
+                Our legal basis for processing personal data includes your consent, the 
+                performance of a contract, and our legitimate interests in providing and 
+                improving our services.
+            </p>
+        </section>
+
+        <!-- Children's Privacy -->
+        <section class="content-section">
+            <h2><i class="fas fa-child"></i>Children's Privacy</h2>
+            <p>
+                Our services are not intended for children under the age of 13. We do not 
+                knowingly collect personal information from children under 13. If you become 
+                aware that a child has provided us with personal information without parental 
+                consent, please contact us immediately.
+            </p>
+        </section>
+
+        <!-- Third-Party Links -->
+        <section class="content-section">
+            <h2><i class="fas fa-external-link-alt"></i>Third-Party Links</h2>
+            <p>
+                Our platform may contain links to third-party websites, services, or applications 
+                that are not operated by us. We are not responsible for the privacy practices of 
+                these third parties. We encourage you to review the privacy policies of any 
+                third-party sites you visit.
+            </p>
+        </section>
+
+        <!-- Changes to Policy -->
+        <section class="content-section">
+            <h2><i class="fas fa-sync-alt"></i>Changes to This Policy</h2>
+            <p>
+                We may update this Privacy Policy from time to time to reflect changes in our 
+                practices or for operational, legal, or regulatory reasons. We will notify you 
+                of any material changes by posting the new policy on this page and updating the 
+                "Last Updated" date.
+            </p>
+            <p>
+                We encourage you to review this Privacy Policy periodically to stay informed 
+                about how we protect your information.
+            </p>
+        </section>
+
+        <!-- Contact Information -->
+        <section class="content-section">
+            <h2><i class="fas fa-envelope"></i>Contact Us</h2>
+            <p>
+                If you have any questions or concerns about this Privacy Policy or our data 
+                practices, please contact us:
+            </p>
+            <ul>
+                <li><strong>Email:</strong> support@fifastats.com</li>
+                <li><strong>Admin:</strong> serge.wiseabijuru5@gmail.com</li>
+            </ul>
+            
+            <div class="important-box">
+                <h3><i class="fas fa-check-circle"></i>Your Consent</h3>
+                <p>
+                    By using FIFA Stats, you consent to the collection and use of information 
+                    in accordance with this policy. If you do not agree to this policy, please 
+                    do not use our services.
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <i class="fas fa-trophy me-2"></i>FIFA STATS
+            </div>
+            <div class="footer-links">
+                <a href="about.html">About</a>
+                <a href="how-it-works.html">How It Works</a>
+                <a href="blog.html">Tips & Guides</a>
+                <a href="contact.html">Contact</a>
+                <a href="privacy-policy.html">Privacy Policy</a>
+                <a href="terms-of-service.html">Terms of Service</a>
+            </div>
+            <div class="footer-copyright">
+                &copy; 2026 FIFA Stats. All rights reserved. Built for Dream League Soccer players worldwide.
+            </div>
         </div>
-    </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
+
